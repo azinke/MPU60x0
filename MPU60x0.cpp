@@ -767,7 +767,8 @@ IMU_DATA MPU60x0::read(){
 */
 uint8_t MPU60x0::gyroXSelfTest(){
     uint8_t test_value = 0;
-    seGyroFSR(0); // set FSR to ±250°/s
+    uint8_t fsr = getGyroFSR();
+    setGyroFSR(0); // set FSR to ±250°/s
     // Enable selt test of gyro X-axis
     _buffer = _read(GYRO_CONFIG);
     _buffer |= (1 << 7);
@@ -775,6 +776,7 @@ uint8_t MPU60x0::gyroXSelfTest(){
     test_value = _read(SELF_TEST_X) && 0x1F;
     _buffer &= ~(1 << 7);
     _write(GYRO_CONFIG, _buffer);
+    setGyroFSR(fsr); // set FSR to the default value
     return test_value;
 }
 
@@ -787,7 +789,8 @@ uint8_t MPU60x0::gyroXSelfTest(){
 */
 uint8_t MPU60x0::gyroYSelfTest(){
     uint8_t test_value = 0;
-    seGyroFSR(0); // set FSR to ±250°/s
+    uint8_t fsr = getGyroFSR();
+    setGyroFSR(0); // set FSR to ±250°/s
     // Enable selt test of gyro X-axis
     _buffer = _read(GYRO_CONFIG);
     _buffer |= (1 << 6);
@@ -795,6 +798,7 @@ uint8_t MPU60x0::gyroYSelfTest(){
     test_value = _read(SELF_TEST_Y) && 0x1F;
     _buffer &= ~(1 << 6);
     _write(GYRO_CONFIG, _buffer);
+    setGyroFSR(fsr); // set FSR to the default value
     return test_value;
 }
 
@@ -807,7 +811,8 @@ uint8_t MPU60x0::gyroYSelfTest(){
 */
 uint8_t MPU60x0::gyroZSelfTest(){
     uint8_t test_value = 0;
-    seGyroFSR(0); // set FSR to ±250°/s
+    uint8_t fsr = getGyroFSR();
+    setGyroFSR(0); // set FSR to ±250°/s
     // Enable selt test of gyro X-axis
     _buffer = _read(GYRO_CONFIG);
     _buffer |= (1 << 5);
@@ -815,6 +820,7 @@ uint8_t MPU60x0::gyroZSelfTest(){
     test_value = _read(SELF_TEST_Z) && 0x1F;
     _buffer &= ~(1 << 5);
     _write(GYRO_CONFIG, _buffer);
+    setGyroFSR(fsr); // set FSR to the default value
     return test_value;
 }
 
@@ -827,7 +833,8 @@ uint8_t MPU60x0::gyroZSelfTest(){
 */
 uint8_t MPU60x0::accelXSelfTest(){
     uint8_t test_value = 0;
-    seAccelFSR(2); // set FSR to ±8g
+    uint8_t fsr = getAccelFSR();
+    setAccelFSR(2); // set FSR to ±8g
     // Enable selt test of gyro X-axis
     _buffer = _read(ACCEL_CONFIG);
     _buffer |= (1 << 7);
@@ -836,6 +843,7 @@ uint8_t MPU60x0::accelXSelfTest(){
     test_value += (_read(SELF_TEST_A) && 0x30) >> 4;
     _buffer &= ~(1 << 7);
     _write(GYRO_CONFIG, _buffer);
+    setAccelFSR(fsr); // set FSR to the default value
     return test_value;
 }
 
@@ -848,7 +856,8 @@ uint8_t MPU60x0::accelXSelfTest(){
 */
 uint8_t MPU60x0::accelYSelfTest(){
     uint8_t test_value = 0;
-    seAccelFSR(2); // set FSR to ±8g
+    uint8_t fsr = getAccelFSR();
+    setAccelFSR(2); // set FSR to ±8g
     // Enable selt test of gyro X-axis
     _buffer = _read(ACCEL_CONFIG);
     _buffer |= (1 << 6);
@@ -857,6 +866,7 @@ uint8_t MPU60x0::accelYSelfTest(){
     test_value += (_read(SELF_TEST_A) && 0x0C) >> 2;
     _buffer &= ~(1 << 6);
     _write(GYRO_CONFIG, _buffer);
+    setAccelFSR(fsr); // set FSR to the default value
     return test_value;
 }
 
@@ -869,7 +879,8 @@ uint8_t MPU60x0::accelYSelfTest(){
 */
 uint8_t MPU60x0::accelZSelfTest(){
     uint8_t test_value = 0;
-    seAccelFSR(2); // set FSR to ±8g
+    uint8_t fsr = getAccelFSR();
+    setAccelFSR(2); // set FSR to ±8g
     // Enable selt test of gyro X-axis
     _buffer = _read(ACCEL_CONFIG);
     _buffer |= (1 << 5);
@@ -878,6 +889,7 @@ uint8_t MPU60x0::accelZSelfTest(){
     test_value += (_read(SELF_TEST_A) && 0x03);
     _buffer &= ~(1 << 5);
     _write(GYRO_CONFIG, _buffer);
+    setAccelFSR(fsr); // set FSR to the default value
     return test_value;
 }
 
