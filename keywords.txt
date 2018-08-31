@@ -1,0 +1,85 @@
+#######################################
+# Syntax Coloring Map MPU60x0
+# by Kenneth AMOUSSOU
+# 	github: @azinke
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+MPU60x0		KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+configure   KEYWORD2
+begin	KEYWORD2
+whoami	KEYWORD2
+reset	KEYWORD2
+
+setSampleRateDivider    KEYWORD2
+
+setGyroFSR	KEYWORD2
+setAcceFSR	KEYWORD2
+
+getGyroX	KEYWORD2
+getGyroY	KEYWORD2
+getGyroZ	KEYWORD2
+acceReset	KEYWORD2
+
+getAcceX	KEYWORD2
+getAcceY	KEYWORD2
+getAcceZ	KEYWORD2
+gyroReset	KEYWORD2
+
+getTemp	    KEYWORD2
+tempReset	KEYWORD2
+disableTemp KEYWORD2
+enableTemp  KEYWORD2
+
+enableGyroTest  KEYWORD2
+enableAccelTest KEYWORD2
+
+enableXgFifo    KEYWORD2
+enableYgFifo    KEYWORD2
+enableZgFifo    KEYWORD2
+enableAccelFifo KEYWORD2
+enableTempFifo  KEYWORD2
+enableSlave0Fifo    KEYWORD2
+enableSlave1Fifo    KEYWORD2
+enableSlave2Fifo    KEYWORD2
+enableSlave3Fifo    KEYWORD2
+int16_t readFifo    KEYWORD2
+resetFifo   KEYWORD2
+enableFifo  KEYWORD2
+disableFifo KEYWORD2
+
+enableSleepMode KEYWORD2
+disableSleepMode    KEYWORD2
+
+setClock    KEYWORD2
+
+gyroXSelfTest   KEYWORD2
+gyroYSelfTest   KEYWORD2
+gyroZSelfTest   KEYWORD2
+
+accelXSelfTest  KEYWORD2
+accelYSelfTest  KEYWORD2
+accelZSelfTest  KEYWORD2
+
+getData KEYWORD2
+read    KEYWORD2
+
+i2cMultiMasterEnable    KEYWORD2
+i2cMultiMasterDisable   KEYWORD2
+i2cMasterClock  KEYWORD2
+i2cSlave0Enable KEYWORD2
+i2cSlave0Disable    KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+IMU_DATA	LITERAL1	Constants
+#INC	LITERAL1	Constants
