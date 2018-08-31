@@ -884,6 +884,119 @@ uint8_t MPU60x0::accelZSelfTest(){
     return test_value;
 }
 
+/**
+    ============================================================
+                            I2C MASTER
+    ============================================================
+**/
+
+/**
+    function: i2cMultiMasterEnable
+    @summary: enable multi master capability on the sensor
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::i2cMultiMasterEnable(){
+    _buffer = _read(I2C_MST_CTRL);
+    _buffer |= (1 << 7);
+    _write(I2C_MST_CTRL, _buffer);
+    return true;
+}
+
+/**
+    function: i2cMultiMasterDisable
+    @summary: enable multi master capability on the sensor
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::i2cMultiMasterDisable(){
+    _buffer = _read(I2C_MST_CTRL);
+    _buffer &= ~(1 << 7);
+    _write(I2C_MST_CTRL, _buffer);
+    return true;
+}
+
+/**
+    function: i2cMasterClok
+    @summary: enable multi master capability on the sensor
+    @parameter:
+        clock: set the master clock by choosing between 0 and 15
+            [00] I2C_MST_CLK_0: 348kHz
+            [01] I2C_MST_CLK_1: 333kHz
+            [02] I2C_MST_CLK_2: 320kHz
+            [03] I2C_MST_CLK_3: 308kHz
+            [04] I2C_MST_CLK_4: 296kHz
+            [05] I2C_MST_CLK_5: 286kHz
+            [06] I2C_MST_CLK_6: 276kHz
+            [07] I2C_MST_CLK_7: 267kHz
+            [08] I2C_MST_CLK_8: 258kHz
+            [09] I2C_MST_CLK_9: 500kHz
+            [10] I2C_MST_CLK_10: 471kHz
+            [11] I2C_MST_CLK_11: 444kHz
+            [12] I2C_MST_CLK_12: 421kHz
+            [13] I2C_MST_CLK_13: 400kHz
+            [14] I2C_MST_CLK_14: 381kHz
+            [15] I2C_MST_CLK_15: 364kHz
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::i2cMasterClock(uint8_t clock){
+    _buffer = _read(I2C_MST_CTRL);
+    _buffer = (_buffer && 0xF0) + clock;    
+    _write(I2C_MST_CTRL, _buffer);
+    return true;
+}
+
+/**
+    function: i2cSlave0Enable
+    @summary: enable slave 0 for writing and reading operations
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::i2cSlave0Enable(){
+    _buffer = (_read(I2C_SLV0_CTRL) && 0x0F);
+    _buffer |= (1 << 7);
+    _write(I2C_SLV0_CTRL, _buffer);
+    return true;
+}
+
+/**
+    function: i2cSlave0Disable
+    @summary: disable slave 0
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::i2cSlave0Disable(){
+    _write(I2C_SLV0_CTRL, 0x00);
+    return true;
+}
+
+/**
+    function: i2cSlave0WriteBytes
+    @summary: write bytes on slave 0
+    @parameter:
+        address: The slave 0 device address
+        start_register: the address of the first register to be written
+        size: The number of byte to write
+    @return:
+        uint16_t: number of bytes written on the slave device
+
+    TODO test this methods to be sure that it's working
+*/
+uint16_t MPU60x0::i2cSlave0WriteBytes(uint8_t address, uint8_t start_register, uint8_t *data, uint16_t size){
+    _write(I2C_SLV0_ADDR, (address && 0x7F));
+    _write(I2C_SLV0_REG, start_register);
+    _write(I2C_SLV0_CTRL, (0x80 + (0x0F && size)));
+    uint16_t i = 0;
+    for(i = 0; i < size; i++){
+        _write(I2C_SLV0_DO, data[i]);
+    }
+    return i;
+}
 
 /**
     ============================================================
