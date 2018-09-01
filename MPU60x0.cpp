@@ -894,3 +894,234 @@ uint8_t MPU60x0::accelZSelfTest(){
 }
 
 
+/**
+    ============================================================
+                            STANDBY
+    ============================================================
+**/
+
+/**
+    function: enableAccelStandby
+    @summary: enable accelerometer standby for all axis
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableAccelStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer |= 0x38;
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: enableAccelXStandby
+    @summary: enable accelerometer X standby
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableAccelXStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer |= (1 << 5);
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: enableAccelYStandby
+    @summary: enable accelerometer Y standby
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableAccelYStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer |= (1 << 4);
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: enableAccelZStandby
+    @summary: enable accelerometer Z standby
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableAccelZStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer |= (1 << 3);
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: enableGyroStandby
+    @summary: enable gyroscope standby for all axis
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableGyroStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer |= 0x07;
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: enableGyroXStandby
+    @summary: enable gyroscope X standby
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableGyroXStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer |= (1 << 2);
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: enableGyroYStandby
+    @summary: enable gyroscope Y standby
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableGyroYStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer |= (1 << 1);
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: enableGyroZStandby
+    @summary: enable gyroscope Z standby
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableGyroZStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer |= 1;
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: disableAccelStandby
+    @summary: disable accelerometer standby for all axis
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableAccelStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer = (_buffer && 0xC7);
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: disableAccelXStandby
+    @summary: disable accelerometer X standby
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableAccelXStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer &= ~(1 << 5);
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: disableAccelYStandby
+    @summary: disable accelerometer Y standby
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableAccelYStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer &= ~(1 << 4);
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: disableAccelZStandby
+    @summary: disable accelerometer Z standby
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableAccelZStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer &= ~(1 << 3);
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: disableGyroStandby
+    @summary: disable gyroscope standby for all axis
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableGyroStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer = (_buffer && 0xF8);
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: disableGyroXStandby
+    @summary: disable gyroscope X standby
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableGyroXStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer &= ~(1 << 2);
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: disableGyroYStandby
+    @summary: disable gyroscope Y standby
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableGyroYStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer &= ~(1 << 1);
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+/**
+    function: disableGyroZStandby
+    @summary: disable gyroscope Z standby
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableGyroZStandby(){
+    _buffer = _read(PWR_MGMT_2);
+    _buffer &= ~1;
+    _write(PWR_MGMT_2, _buffer);
+    return true;
+}
+
+

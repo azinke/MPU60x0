@@ -203,6 +203,26 @@ class MPU60x0{
         IMU_DATA getData(); // get all the data from the sensor
         IMU_DATA read();    // compute sensor data and return them back
         
+        bool enableAccelXStandby();
+        bool enableAccelYStandby();
+        bool enableAccelZStandby();
+        bool enableAccelStandby();
+        
+        bool enableGyroXStandby();
+        bool enableGyroYStandby();
+        bool enableGyroZStandby();
+        bool enableGyroStandby();
+        
+        bool disableAccelXStandby();
+        bool disableAccelYStandby();
+        bool disableAccelZStandby();
+        bool disableAccelStandby();
+        
+        bool disableGyroXStandby();
+        bool disableGyroYStandby();
+        bool disableGyroZStandby();
+        bool disableGyroStandby();
+                
         bool i2cMultiMasterEnable();
         bool i2cMultiMasterDisable();
         bool i2cMasterClock(uint8_t clock);
