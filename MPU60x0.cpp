@@ -23,8 +23,8 @@ void MPU60x0::begin(){
     configure(0, 1);
     disableSleepMode();
     setClock(1);
-    setGyroFSR(2);
-    setAccelFSR(2);
+    setGyroFSR(0);
+    setAccelFSR(0);
 }
 
 /**
@@ -731,15 +731,15 @@ IMU_DATA MPU60x0::read(){
     /* read FSR */
     uint8_t _gyroFsr = getGyroFSR();
     uint8_t _accelFsr = getAccelFSR();
-    buffer.accelX = (float)(buffer.accelX/ACCEL_SENSITIVITY[_accelFsr]);
-    buffer.accelY = (float)(buffer.accelY/ACCEL_SENSITIVITY[_accelFsr]);
-    buffer.accelZ = (float)(buffer.accelY/ACCEL_SENSITIVITY[_accelFsr]);
+    buffer.accelX = (float)(buffer.accelX/ACCEL_SENSITIVITY[_accelFsr]) * 9.81;
+    buffer.accelY = (float)(buffer.accelY/ACCEL_SENSITIVITY[_accelFsr]) * 9.81;
+    buffer.accelZ = (float)(buffer.accelZ/ACCEL_SENSITIVITY[_accelFsr]) * 9.81;
     
     buffer.gyroX = (float)(buffer.gyroX * 10.0)/GYRO_SENSITIVITY[_gyroFsr];
     buffer.gyroY = (float)(buffer.gyroY * 10.0)/GYRO_SENSITIVITY[_gyroFsr];
     buffer.gyroZ = (float)(buffer.gyroZ * 10.0)/GYRO_SENSITIVITY[_gyroFsr];
 
-    buffer.temp = (float)(buffer.temp/340 + 36.53);
+    buffer.temp = (float)(buffer.temp/340) + 36.53;
     return buffer;
 }
 
