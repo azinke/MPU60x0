@@ -294,7 +294,7 @@ int16_t MPU60x0::getAccelY(){
 }
 
 /**
-    function: getAcceZ
+    function: getAccelZ
     @summary: read the accelerometer Z-axis value from memory
     @parameter: none
     @return:
@@ -303,7 +303,7 @@ int16_t MPU60x0::getAccelY(){
 int16_t MPU60x0::getAccelZ(){
     int16_t buffer = 0;
     buffer = _read(ACCEL_ZOUT_H) << 8;
-    return _buffer + _read(ACCEL_ZOUT_L);    
+    return buffer + _read(ACCEL_ZOUT_L);    
 }
 
 /**
@@ -676,10 +676,13 @@ int16_t MPU60x0::readFifo(){
 
 /**
     function: getData
-    @summary: read all the measured data from the sensor
+    @summary: read all the measured data from the sensor. These are raw data
     @parameter: none
     @return:
         DATA: return a struct that contain all the required data
+              These are not really meaning full.
+              
+    # Should use this function if you know how to handle raw value #
 */
 IMU_DATA MPU60x0::getData(){
     struct {
@@ -709,18 +712,6 @@ IMU_DATA MPU60x0::getData(){
     buffer.gyroX = (registers.gyroX_H << 8) + registers.gyroX_L;
     buffer.gyroY = (registers.gyroY_H << 8) + registers.gyroY_L;
     buffer.gyroZ = (registers.gyroZ_H << 8) + registers.gyroZ_L;
-    
-    /**
-    buffer.accelX = getAcceX();ACCEL_XOUT_H
-    buffer.accelY = getAcceY();
-    buffer.accelZ = getAcceZ();
-    
-    buffer.temp = getTemp();
-    
-    buffer.gyroX = getGyroX();
-    buffer.gyroY = getGyroY();
-    buffer.gyroZ = getGyroZ();
-    **/
     return buffer;
 }
 
