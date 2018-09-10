@@ -288,6 +288,22 @@ class MPU60x0{
         bool enableSlave4Interrupt();
         bool disableSlave4Interrupt();
         
+        bool setInterruptLevel(bool level);
+        bool setInterruptPinState(bool state);
+        bool enableInterruptPinLatch();
+        bool disableInterruptPinLatch();
+        bool clearInterruptOn(bool reading_status);
+        bool enableFsyncInterrupt();
+        bool setFsyncInterruptLevel(bool level);
+        bool enableMotionDetectionInterrupt();
+        bool disableMotionDetectionInterrupt();
+        bool enableFifoOverflowInterrupt();
+        bool disableFifoOverflowInterrupt();
+        bool enableI2cMasterInterrupt();
+        bool disableI2cMasterInterrupt();
+        bool enableDataReadyInterrupt();
+        bool disableDataReadyInterrupt();
+        uint8_t getInterruptStatus();        
         
     private:
         void _write(uint8_t registerAddr, uint8_t data);

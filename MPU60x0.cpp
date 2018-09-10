@@ -2012,4 +2012,259 @@ bool MPU60x0::disableGyroZStandby(){
     return true;
 }
 
+/**
+    ============================================================
+                           INTERRUPT
+    ============================================================
+**/
+/**
+    function: setInterruptLevel
+    @summary: configure the interrupt level
+    @parameter:
+        level:
+            [0]: active HIGH
+            [1]: active LOW
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::setInterruptLevel(bool level){
+    _buffer = _read(INT_PIN_CFG);
+    if(level) _buffer |= (1 << 7);
+    else _buffer &= ~(1 << 7);
+    _write(INT_PIN_CFG, _buffer);
+    return 1;
+}
 
+/**
+    function: setInterruptPinState
+    @summary: configure interrupt pin state on the sensor
+    @parameter:
+        state:
+            [0]: push-pull
+            [1]: open drain
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::setInterruptPinState(bool state){
+    _buffer = _read(INT_PIN_CFG);
+    if(state) _buffer |= (1 << 6);
+    else _buffer &= ~(1 << 6);
+    _write(INT_PIN_CFG, _buffer);
+    return 1;
+}
+
+/**
+    function: enableInterruptPinLatch
+    @summary: enable interrupt pin latch
+              The INT pin is held high until the interrupt is cleared.
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableInterruptPinLatch(){
+    _buffer = _read(INT_PIN_CFG);
+    _buffer |= (1 << 5);
+    _write(INT_PIN_CFG, _buffer);
+    return 1;
+}
+
+/**
+    function: disableInterruptPinLatch
+    @summary: enable interrupt pin latch
+              The INT pin emits a 50us long pulse.
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableInterruptPinLatch(){
+    _buffer = _read(INT_PIN_CFG);
+    _buffer &= ~(1 << 5);
+    _write(INT_PIN_CFG, _buffer);
+    return 1;
+}
+
+/**
+    function: clearInterruptOn
+    @summary: configure the operation required to clear interrupt
+    @parameter:
+        reading_status:
+            [0]: interrupt status bits are cleared on any read operation.
+            [1]: interrupt status bits are cleared only by reading INT_STATUS
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::clearInterruptOn(bool reading_status){
+    _buffer = _read(INT_PIN_CFG);
+    if(reading_status) _buffer &= ~(1 << 4);
+    else _buffer |= (1 << 4);
+    _write(INT_PIN_CFG, _buffer);
+    return 1;
+}
+
+/**
+    function: enableFsyncInterrupt
+    @summary: enable the FSYNC pin to cause interrupt on the host processor
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableFsyncInterrupt(){
+    _buffer = _read(INT_PIN_CFG) | 1;
+    _write(INT_PIN_CFG, _buffer);
+    return 1;
+}
+
+/**
+    function: setFsyncInterruptLevel
+    @summary: configure the interrupt level on FSYNC pin
+    @parameter:
+        level:
+            [0]: active HIGH
+            [1]: active LOW
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::setFsyncInterruptLevel(bool level){
+    _buffer = _read(INT_PIN_CFG);
+    if(level) _buffer |= (1 << 1);
+    else _buffer &= ~(1 << 1);
+    _write(INT_PIN_CFG, _buffer);
+    return 1;
+}
+
+// Enable interrupts
+/**
+    function: enableMotionDetectionInterrupt
+    @summary: enable motion detection to generate an interrupt
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableMotionDetectionInterrupt(){
+    _buffer = _read(INT_ENABLE);
+    _buffer |= (1 << 6);
+    _write(INT_ENABLE, _buffer);
+    return 1;
+}
+
+/**
+    function: disableMotionDetectionInterrupt
+    @summary: unable motion detection to generate an interrupt
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableMotionDetectionInterrupt(){
+    _buffer = _read(INT_ENABLE);
+    _buffer &= ~(1 << 6);
+    _write(INT_ENABLE, _buffer);
+    return 1;
+}
+
+/**
+    function: enableFifoOverflowInterrupt
+    @summary: enable FIFO to generate an interrupt on overflow
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableFifoOverflowInterrupt(){
+    _buffer = _read(INT_ENABLE);
+    _buffer |= (1 << 4);
+    _write(INT_ENABLE, _buffer);
+    return 1;
+}
+
+/**
+    function: disableFifoOverflowInterrupt
+    @summary: disable FIFO to generate an interrupt on overflow
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableFifoOverflowInterrupt(){
+    _buffer = _read(INT_ENABLE);
+    _buffer &= ~(1 << 4);
+    _write(INT_ENABLE, _buffer);
+    return 1;
+}
+
+/**
+    function: enableI2cMasterInterrupt
+    @summary: enables any of the I2C Master interrupt sources to generate an 
+              interrupt.
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableI2cMasterInterrupt(){
+    _buffer = _read(INT_ENABLE);
+    _buffer |= (1 << 3);
+    _write(INT_ENABLE, _buffer);
+    return 1;
+}
+
+/**
+    function: disableI2cMasterInterrupt
+    @summary: disables any of the I2C Master interrupt sources to generate an 
+              interrupt.
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableI2cMasterInterrupt(){
+    _buffer = _read(INT_ENABLE);
+    _buffer &= ~(1 << 3);
+    _write(INT_ENABLE, _buffer);
+    return 1;
+}
+
+/**
+    function: enableDataReadyInterrupt
+    @summary: enables the data ready interrupt.
+              This occurs each time a write operation to all of the sensor 
+              registers has been completed.
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::enableDataReadyInterrupt(){
+    _buffer = _read(INT_ENABLE);
+    _buffer |= 1;
+    _write(INT_ENABLE, _buffer);
+    return 1;
+}
+
+/**
+    function: disableDataReadyInterrupt
+    @summary: disables the data ready interrupt.
+              This occurs each time a write operation to all of the sensor 
+              registers has been completed.
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::disableDataReadyInterrupt(){
+    _buffer = _read(INT_ENABLE);
+    _buffer &= ~1;
+    _write(INT_ENABLE, _buffer);
+    return 1;
+}
+
+/**
+    function: getInterruptStatus
+    @summary: read the interrupt status register
+    @parameter: none
+    @return:
+        uint8_t: 
+                bit-fileds
+            [0]: Data ready interrupt
+            [3]: I2C master interrupt
+            [4]: Fifo overflow interrupt
+            [6]: Motion detection interrupt
+        
+        # Ready the status register clear each interrupt bit #
+*/
+uint8_t MPU60x0::getInterruptStatus(){
+    return _read(INT_STATUS);
+}
