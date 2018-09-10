@@ -992,6 +992,38 @@ float MPU60x0::i2cGetSampleRate(){
     return (float)(1 / (1 + i2cGetMasterDelay()));
 }
 
+/**
+    function: i2cMasterStatus
+    @summary: read the status of the interrupt generating signals in the I2C 
+              Master within the MPU60X0
+    @parameter: none
+    @return:
+        uint8_t: 
+            [0]: I2C slave 0 NACK (sets to 1 when the I2C Master receives a 
+                                    NACK in a transaction with Slave 0.)
+            [1]: I2C slave 1 NACK (sets to 1 when the I2C Master receives a 
+                                    NACK in a transaction with Slave 1.)
+            [2]: I2C slave 2 NACK (sets to 1 when the I2C Master receives a 
+                                    NACK in a transaction with Slave 2.)
+            [3]: I2C slave 3 NACK (sets to 1 when the I2C Master receives a 
+                                    NACK in a transaction with Slave 3.)
+            [4]: I2C slave 4 NACK (sets to 1 when the I2C Master receives a 
+                                    NACK in a transaction with Slave 4.)
+            [5]: I2C_LOST_ARB (sets to 1 when the I2C Master lost arbitration of 
+                                    the auxillary I2C master)
+            [6]: I2C_SLV4_DONE (sets to 1 when the slave 4 transaction has 
+                                completed)
+            [7]: PASS_THROUGH (This bit reflects the status of the FSYNC interrupt 
+                               from an external device into the MPU-60X0.)
+
+           # It is important to notice that this register (I2C_MST_STATUS) is 
+             automatically cleared on reading operation #
+            
+*/
+uint8_t MPU60x0::i2cMasterStatus(){
+    return _read(I2C_MST_STATUS);
+}
+
 // Slave 0
 /**
     function: slave0Enable

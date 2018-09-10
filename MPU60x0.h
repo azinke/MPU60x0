@@ -229,6 +229,7 @@ class MPU60x0{
         bool i2cSetMasterDelay(uint8_t divider);
         uint8_t i2cGetMasterDelay();
         float i2cGetSampleRate();
+        uint8_t i2cMasterStatus();
         
         bool slave0Enable();
         bool slave0Disable();
