@@ -950,6 +950,50 @@ bool MPU60x0::i2cMasterClock(uint8_t clock){
 }
 
 /**
+    function: i2cSetMasterDelay
+    @summary: configures the reduced access rate of I2C slaves relative to 
+              the Sample Rate
+    @parameter:
+        divider: the value to compute the slaves access rate
+        
+        Slave Access Sample Rate = 1 / (1 + divider)
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::i2cSetMasterDelay(uint8_t divider){
+    _buffer = _read(I2C_SLV4_CTRL);
+    _buffer = (_buffer && 0x70) + (divider && 0x1F);
+    _write(I2C_SLV4_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: i2cGetMasterDelay
+    @summary: configures the reduced access rate of I2C slaves relative to 
+              the Sample Rate
+    @parameter: none
+    @return:
+        uint8_t: return the delay
+*/
+uint8_t MPU60x0::i2cGetMasterDelay(){
+    return (_read(I2C_SLV4_CTRL) && 0x1F);
+}
+
+/**
+    function: i2cGetSampleRate
+    @summary: compute de sample rate on which slaves are accessed
+              Slave Access Sample Rate = 1 / (1 + I2C_MST_DLY[4:0])
+    @see: i2cGetMasterDelay - to get I2C_MST_DLY[4:0]
+    @parameter: none
+    @return:
+        float: return the sample rate of slaves in Hertz (Hz)
+*/
+float MPU60x0::i2cGetSampleRate(){
+    return (float)(1 / (1 + i2cGetMasterDelay()));
+}
+
+// Slave 0
+/**
     function: slave0Enable
     @summary: enable slave 0 for writing and reading operations
     @parameter: none
@@ -1598,6 +1642,112 @@ bool MPU60x0::setSlave3Register(uint8_t address){
 */
 uint8_t MPU60x0::getSlave3Register(){
     return _read(I2C_SLV3_REG);
+}
+
+// Slave 4
+/**
+    function: slave4Enable
+    @summary: enable slave 4 for writing and reading operations
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::slave4Enable(){
+    _buffer = _read(I2C_SLV4_CTRL);
+    _buffer |= (1 << 7);
+    _write(I2C_SLV4_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: slave4Disable
+    @summary: disable slave 4
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::slave4Disable(){
+    _buffer = _read(I2C_SLV4_CTRL);
+    _buffer &= ~(1 << 7);
+    _write(I2C_SLV4_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: enableSlave4Register
+    @summary: configure the transaction to read or write data only
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::enableSlave4Register(){
+    _buffer = _read(I2C_SLV4_CTRL);
+    _buffer |= (1<<5);
+    _write(I2C_SLV4_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: disableSlave4Register
+    @summary: set the I2C_SLV4_REG_DIS bit to 0. Therefore, the transaction 
+              will write a register address prior to reading or writing data.
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::disableSlave4Register(){
+    _buffer = _read(I2C_SLV4_CTRL);
+    _buffer &= ~(1<<5);
+    _write(I2C_SLV4_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: setSlave4Register
+    @summary: set the address of slave 4 we want to write/read data in/from
+    @parameter:
+        address: the register address
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::setSlave4Register(uint8_t address){
+    _write(I2C_SLV4_REG, address);
+    return 1;
+}
+
+/**
+    function: getSlave4Register
+    @summary: read slave 4 address form the sensor
+    @parameter: none
+    @return:
+        uint8_t: return the address of slave 0
+*/
+uint8_t MPU60x0::getSlave4Register(){
+    return _read(I2C_SLV4_REG);
+}
+
+/**
+    function: enableSlave4Interrupt
+    @summary: enable interrupt for slave 4
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::enableSlave4Interrupt(){
+    _buffer = _read(I2C_SLV4_CTRL);
+    _buffer |= (1<<6);
+}
+
+/**
+    function: disableSlave4Interrupt
+    @summary: disable interrupt for slave 4
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::disableSlave4Interrupt(){
+    _buffer = _read(I2C_SLV4_CTRL);
+    _buffer &= ~(1<<6);
 }
 
 /**

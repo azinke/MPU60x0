@@ -226,6 +226,9 @@ class MPU60x0{
         bool i2cMultiMasterEnable();
         bool i2cMultiMasterDisable();
         bool i2cMasterClock(uint8_t clock);
+        bool i2cSetMasterDelay(uint8_t divider);
+        uint8_t i2cGetMasterDelay();
+        float i2cGetSampleRate();
         
         bool slave0Enable();
         bool slave0Disable();
@@ -274,6 +277,15 @@ class MPU60x0{
         uint8_t getSlave3DataLenght();
         void setSlave3DataLength(uint8_t length);
         void slave3Write(uint8_t address, uint8_t _register, uint8_t data); // not tested
+        
+        bool slave4Enable();
+        bool slave4Disable();
+        bool enableSlave4Register();
+        bool disableSlave4Register();
+        bool setSlave4Register(uint8_t address);
+        uint8_t getSlave4Register();
+        bool enableSlave4Interrupt();
+        bool disableSlave4Interrupt();
         
         
     private:
