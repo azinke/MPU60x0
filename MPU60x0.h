@@ -274,7 +274,7 @@ class MPU60x0{
         bool disableSlave3Register();
         bool enableSlave3Register();
         void setSlave3WordGrouping(uint8_t order);
-        bool enableSl3ve0ByteSwap();
+        bool enableSlave3ByteSwap();
         uint8_t getSlave3DataLenght();
         void setSlave3DataLength(uint8_t length);
         void slave3Write(uint8_t address, uint8_t _register, uint8_t data); // not tested

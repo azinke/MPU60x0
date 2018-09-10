@@ -1082,7 +1082,7 @@ void MPU60x0::slave0Write(uint8_t address, uint8_t _register, uint8_t data){
 */
 void MPU60x0::setSlave0DataLength(uint8_t length){
     _buffer = _read(I2C_SLV0_CTRL);
-    _buffer |= (lenght && 0x0F);
+    _buffer |= (length && 0x0F);
     _write(I2C_SLV0_CTRL, _buffer);
 }
 
@@ -1245,7 +1245,7 @@ void MPU60x0::slave1Write(uint8_t address, uint8_t _register, uint8_t data){
 */
 void MPU60x0::setSlave1DataLength(uint8_t length){
     _buffer = _read(I2C_SLV1_CTRL);
-    _buffer |= (lenght && 0x0F);
+    _buffer |= (length && 0x0F);
     _write(I2C_SLV1_CTRL, _buffer);
 }
 
@@ -1408,7 +1408,7 @@ void MPU60x0::slave2Write(uint8_t address, uint8_t _register, uint8_t data){
 */
 void MPU60x0::setSlave2DataLength(uint8_t length){
     _buffer = _read(I2C_SLV2_CTRL);
-    _buffer |= (lenght && 0x0F);
+    _buffer |= (length && 0x0F);
     _write(I2C_SLV2_CTRL, _buffer);
 }
 
@@ -1571,7 +1571,7 @@ void MPU60x0::slave3Write(uint8_t address, uint8_t _register, uint8_t data){
 */
 void MPU60x0::setSlave3DataLength(uint8_t length){
     _buffer = _read(I2C_SLV3_CTRL);
-    _buffer |= (lenght && 0x0F);
+    _buffer |= (length && 0x0F);
     _write(I2C_SLV3_CTRL, _buffer);
 }
 
