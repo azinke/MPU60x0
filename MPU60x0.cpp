@@ -1111,7 +1111,494 @@ uint8_t MPU60x0::getSlave0Register(){
     return _read(I2C_SLV0_REG);
 }
 
+// Slave 1
+/**
+    function: slave1Enable
+    @summary: enable slave 1 for writing and reading operations
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::slave1Enable(){
+    _buffer = _read(I2C_SLV1_CTRL);
+    _buffer |= (1 << 7);
+    _write(I2C_SLV1_CTRL, _buffer);
+    return 1;
+}
 
+/**
+    function: slave1Disable
+    @summary: disable slave 1
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::slave1Disable(){
+    _buffer = _read(I2C_SLV1_CTRL);
+    _buffer &= ~(1 << 7);
+    _write(I2C_SLV1_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: slave1Write
+    @summary: write a single byte on slave 1
+    @parameter:
+        address: The slave 1 device address
+        start_register: the address of the first register to be written
+        size: The number of byte to write
+    @return:
+        uint16_t: number of bytes written on the slave device
+
+    TODO test this methods to be sure that it's working
+*/
+void MPU60x0::slave1Write(uint8_t address, uint8_t _register, uint8_t data){
+    _write(I2C_SLV1_ADDR, (address && 0x7F));
+    _write(I2C_SLV1_REG, _register);
+    _write(I2C_SLV1_DO, data);
+    _write(I2C_SLV1_CTRL, 0x81); // Slave 0 enable + data lenght = 1
+    _write(I2C_SLV1_CTRL, 0x00);
+}
+
+/**
+    function: setSlave1DataLength
+    @summary: set slave 1 data length for reading or writing operation
+    @parameter:
+        length: number of byte to read or write
+    @return: none
+*/
+void MPU60x0::setSlave1DataLength(uint8_t length){
+    _buffer = _read(I2C_SLV1_CTRL);
+    _buffer |= (lenght && 0x0F);
+    _write(I2C_SLV1_CTRL, _buffer);
+}
+
+/**
+    function: getSlave1DataLenght
+    @summary: get slave 1 data length for reading or writing operation
+    @parameter: none
+    @return:
+        uint8_t: number of byte
+*/
+uint8_t MPU60x0::getSlave1DataLenght(){
+    return (_read(I2C_SLV1_CTRL) && 0x0F);
+}
+
+/**
+    function: enableSlave1ByteSwap
+    @summary: configure byte swapping of word pairs.
+    @see: Checkout group pairing (setSlave0WordGrouping)
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::enableSlave1ByteSwap(){
+    _buffer = _read(I2C_SLV1_CTRL);
+    _buffer |= (1<<6);
+    _write(I2C_SLV1_CTRL, _buffer);
+}
+
+/**
+    function: setSlave1WordGrouping
+    @summary: configure the grouping order of word pairs received from registers.
+    @parameter:
+        order:
+            Value: 0 | 1
+            [0]: bytes from register addresses 0 and 1, 2 and 3, etc 
+                 (even, then odd register addresses) are paired to form a word.
+            [1]: bytes from register addresses are paired 1 and 2, 3 and 4, etc.
+                 (odd, then even register addresses) are paired to form a word.
+    @return: none
+*/
+void MPU60x0::setSlave1WordGrouping(uint8_t order){
+    if(order == 1){
+        _buffer = _read(I2C_SLV1_CTRL);
+        _buffer |= (1<<4);
+    }else if(order == 0){
+        _buffer = _read(I2C_SLV1_CTRL);
+        _buffer &= ~(1<<4);
+    }else return;
+    _write(I2C_SLV1_CTRL, _buffer);
+}
+
+/**
+    function: enableSlave1Register
+    @summary: configure the transaction to read or write data only
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::enableSlave1Register(){
+    _buffer = _read(I2C_SLV1_CTRL);
+    _buffer |= (1<<5);
+    _write(I2C_SLV1_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: disableSlave1Register
+    @summary: set the I2C_SLV1_REG_DIS bit to 0. Therefore, the transaction 
+              will write a register address prior to reading or writing data.
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::disableSlave1Register(){
+    _buffer = _read(I2C_SLV1_CTRL);
+    _buffer &= ~(1<<5);
+    _write(I2C_SLV1_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: setSlave1Register
+    @summary: set the address of slave 1 we want to write/read data in/from
+    @parameter:
+        address: the register address
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::setSlave1Register(uint8_t address){
+    _write(I2C_SLV1_REG, address);
+    return 1;
+}
+
+/**
+    function: getSlave1Register
+    @summary: read slave 1 address form the sensor
+    @parameter: none
+    @return:
+        uint8_t: return the address of slave 0
+*/
+uint8_t MPU60x0::getSlave1Register(){
+    return _read(I2C_SLV1_REG);
+}
+
+// Slave 2
+/**
+    function: slave2Enable
+    @summary: enable slave 2 for writing and reading operations
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::slave2Enable(){
+    _buffer = _read(I2C_SLV2_CTRL);
+    _buffer |= (1 << 7);
+    _write(I2C_SLV2_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: slave2Disable
+    @summary: disable slave 2
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::slave2Disable(){
+    _buffer = _read(I2C_SLV2_CTRL);
+    _buffer &= ~(1 << 7);
+    _write(I2C_SLV2_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: slave2Write
+    @summary: write a single byte on slave 2
+    @parameter:
+        address: The slave 2 device address
+        start_register: the address of the first register to be written
+        size: The number of byte to write
+    @return:
+        uint16_t: number of bytes written on the slave device
+
+    TODO test this methods to be sure that it's working
+*/
+void MPU60x0::slave2Write(uint8_t address, uint8_t _register, uint8_t data){
+    _write(I2C_SLV2_ADDR, (address && 0x7F));
+    _write(I2C_SLV2_REG, _register);
+    _write(I2C_SLV2_DO, data);
+    _write(I2C_SLV2_CTRL, 0x81); // Slave 0 enable + data lenght = 1
+    _write(I2C_SLV2_CTRL, 0x00);
+}
+
+/**
+    function: setSlave2DataLength
+    @summary: set slave 2 data length for reading or writing operation
+    @parameter:
+        length: number of byte to read or write
+    @return: none
+*/
+void MPU60x0::setSlave2DataLength(uint8_t length){
+    _buffer = _read(I2C_SLV2_CTRL);
+    _buffer |= (lenght && 0x0F);
+    _write(I2C_SLV2_CTRL, _buffer);
+}
+
+/**
+    function: getSlave2DataLenght
+    @summary: get slave 2 data length for reading or writing operation
+    @parameter: none
+    @return:
+        uint8_t: number of byte
+*/
+uint8_t MPU60x0::getSlave2DataLenght(){
+    return (_read(I2C_SLV2_CTRL) && 0x0F);
+}
+
+/**
+    function: enableSlave2ByteSwap
+    @summary: configure byte swapping of word pairs.
+    @see: Checkout group pairing (setSlave0WordGrouping)
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::enableSlave2ByteSwap(){
+    _buffer = _read(I2C_SLV2_CTRL);
+    _buffer |= (1<<6);
+    _write(I2C_SLV2_CTRL, _buffer);
+}
+
+/**
+    function: setSlave2WordGrouping
+    @summary: configure the grouping order of word pairs received from registers.
+    @parameter:
+        order:
+            Value: 0 | 1
+            [0]: bytes from register addresses 0 and 1, 2 and 3, etc 
+                 (even, then odd register addresses) are paired to form a word.
+            [1]: bytes from register addresses are paired 1 and 2, 3 and 4, etc.
+                 (odd, then even register addresses) are paired to form a word.
+    @return: none
+*/
+void MPU60x0::setSlave2WordGrouping(uint8_t order){
+    if(order == 1){
+        _buffer = _read(I2C_SLV2_CTRL);
+        _buffer |= (1<<4);
+    }else if(order == 0){
+        _buffer = _read(I2C_SLV2_CTRL);
+        _buffer &= ~(1<<4);
+    }else return;
+    _write(I2C_SLV2_CTRL, _buffer);
+}
+
+/**
+    function: enableSlave2Register
+    @summary: configure the transaction to read or write data only
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::enableSlave2Register(){
+    _buffer = _read(I2C_SLV2_CTRL);
+    _buffer |= (1<<5);
+    _write(I2C_SLV2_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: disableSlave2Register
+    @summary: set the I2C_SLV2_REG_DIS bit to 0. Therefore, the transaction 
+              will write a register address prior to reading or writing data.
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::disableSlave2Register(){
+    _buffer = _read(I2C_SLV2_CTRL);
+    _buffer &= ~(1<<5);
+    _write(I2C_SLV2_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: setSlave2Register
+    @summary: set the address of slave 2 we want to write/read data in/from
+    @parameter:
+        address: the register address
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::setSlave2Register(uint8_t address){
+    _write(I2C_SLV2_REG, address);
+    return 1;
+}
+
+/**
+    function: getSlave2Register
+    @summary: read slave 2 address form the sensor
+    @parameter: none
+    @return:
+        uint8_t: return the address of slave 0
+*/
+uint8_t MPU60x0::getSlave2Register(){
+    return _read(I2C_SLV2_REG);
+}
+
+// Slave 3
+/**
+    function: slave3Enable
+    @summary: enable slave 3 for writing and reading operations
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::slave3Enable(){
+    _buffer = _read(I2C_SLV3_CTRL);
+    _buffer |= (1 << 7);
+    _write(I2C_SLV3_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: slave3Disable
+    @summary: disable slave 3
+    @parameter: none
+    @return:
+        bool: return true on success
+*/
+bool MPU60x0::slave3Disable(){
+    _buffer = _read(I2C_SLV3_CTRL);
+    _buffer &= ~(1 << 7);
+    _write(I2C_SLV3_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: slave3Write
+    @summary: write a single byte on slave 3
+    @parameter:
+        address: The slave 3 device address
+        start_register: the address of the first register to be written
+        size: The number of byte to write
+    @return:
+        uint16_t: number of bytes written on the slave device
+
+    TODO test this methods to be sure that it's working
+*/
+void MPU60x0::slave3Write(uint8_t address, uint8_t _register, uint8_t data){
+    _write(I2C_SLV3_ADDR, (address && 0x7F));
+    _write(I2C_SLV3_REG, _register);
+    _write(I2C_SLV3_DO, data);
+    _write(I2C_SLV3_CTRL, 0x81); // Slave 0 enable + data lenght = 1
+    _write(I2C_SLV3_CTRL, 0x00);
+}
+
+/**
+    function: setSlave3DataLength
+    @summary: set slave 2 data length for reading or writing operation
+    @parameter:
+        length: number of byte to read or write
+    @return: none
+*/
+void MPU60x0::setSlave3DataLength(uint8_t length){
+    _buffer = _read(I2C_SLV3_CTRL);
+    _buffer |= (lenght && 0x0F);
+    _write(I2C_SLV3_CTRL, _buffer);
+}
+
+/**
+    function: getSlave3DataLenght
+    @summary: get slave 3 data length for reading or writing operation
+    @parameter: none
+    @return:
+        uint8_t: number of byte
+*/
+uint8_t MPU60x0::getSlave3DataLenght(){
+    return (_read(I2C_SLV3_CTRL) && 0x0F);
+}
+
+/**
+    function: enableSlave3ByteSwap
+    @summary: configure byte swapping of word pairs.
+    @see: Checkout group pairing (setSlave0WordGrouping)
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::enableSlave3ByteSwap(){
+    _buffer = _read(I2C_SLV3_CTRL);
+    _buffer |= (1<<6);
+    _write(I2C_SLV3_CTRL, _buffer);
+}
+
+/**
+    function: setSlave2WordGrouping
+    @summary: configure the grouping order of word pairs received from registers.
+    @parameter:
+        order:
+            Value: 0 | 1
+            [0]: bytes from register addresses 0 and 1, 2 and 3, etc 
+                 (even, then odd register addresses) are paired to form a word.
+            [1]: bytes from register addresses are paired 1 and 2, 3 and 4, etc.
+                 (odd, then even register addresses) are paired to form a word.
+    @return: none
+*/
+void MPU60x0::setSlave3WordGrouping(uint8_t order){
+    if(order == 1){
+        _buffer = _read(I2C_SLV3_CTRL);
+        _buffer |= (1<<4);
+    }else if(order == 0){
+        _buffer = _read(I2C_SLV3_CTRL);
+        _buffer &= ~(1<<4);
+    }else return;
+    _write(I2C_SLV3_CTRL, _buffer);
+}
+
+/**
+    function: enableSlave3Register
+    @summary: configure the transaction to read or write data only
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::enableSlave3Register(){
+    _buffer = _read(I2C_SLV3_CTRL);
+    _buffer |= (1<<5);
+    _write(I2C_SLV3_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: disableSlave3Register
+    @summary: set the I2C_SLV3_REG_DIS bit to 0. Therefore, the transaction 
+              will write a register address prior to reading or writing data.
+    @parameter: none
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::disableSlave3Register(){
+    _buffer = _read(I2C_SLV3_CTRL);
+    _buffer &= ~(1<<5);
+    _write(I2C_SLV3_CTRL, _buffer);
+    return 1;
+}
+
+/**
+    function: setSlave3Register
+    @summary: set the address of slave 3 we want to write/read data in/from
+    @parameter:
+        address: the register address
+    @return:
+        bool: return 1 on success
+*/
+bool MPU60x0::setSlave3Register(uint8_t address){
+    _write(I2C_SLV3_REG, address);
+    return 1;
+}
+
+/**
+    function: getSlave3Register
+    @summary: read slave 3 address form the sensor
+    @parameter: none
+    @return:
+        uint8_t: return the address of slave 0
+*/
+uint8_t MPU60x0::getSlave3Register(){
+    return _read(I2C_SLV3_REG);
+}
 
 /**
     ============================================================

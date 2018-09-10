@@ -239,6 +239,42 @@ class MPU60x0{
         void setSlave0DataLength(uint8_t length);
         void slave0Write(uint8_t address, uint8_t _register, uint8_t data); // not tested
         
+        bool slave1Enable();
+        bool slave1Disable();
+        uint8_t getSlave1Register();
+        bool setSlave1Register(uint8_t address);
+        bool disableSlave1Register();
+        bool enableSlave1Register();
+        void setSlave1WordGrouping(uint8_t order);
+        bool enableSlave1ByteSwap();
+        uint8_t getSlave1DataLenght();
+        void setSlave1DataLength(uint8_t length);
+        void slave1Write(uint8_t address, uint8_t _register, uint8_t data); // not tested
+        
+        bool slave2Enable();
+        bool slave2Disable();
+        uint8_t getSlave2Register();
+        bool setSlave2Register(uint8_t address);
+        bool disableSlave2Register();
+        bool enableSlave2Register();
+        void setSlave2WordGrouping(uint8_t order);
+        bool enableSlave2ByteSwap();
+        uint8_t getSlave2DataLenght();
+        void setSlave2DataLength(uint8_t length);
+        void slave2Write(uint8_t address, uint8_t _register, uint8_t data); // not tested
+        
+        bool slave3Enable();
+        bool slave3Disable();
+        uint8_t getSlave3Register();
+        bool setSlave3Register(uint8_t address);
+        bool disableSlave3Register();
+        bool enableSlave3Register();
+        void setSlave3WordGrouping(uint8_t order);
+        bool enableSl3ve0ByteSwap();
+        uint8_t getSlave3DataLenght();
+        void setSlave3DataLength(uint8_t length);
+        void slave3Write(uint8_t address, uint8_t _register, uint8_t data); // not tested
+        
         
     private:
         void _write(uint8_t registerAddr, uint8_t data);
