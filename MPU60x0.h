@@ -226,8 +226,20 @@ class MPU60x0{
         bool i2cMultiMasterEnable();
         bool i2cMultiMasterDisable();
         bool i2cMasterClock(uint8_t clock);
-        bool i2cSlave0Enable();
-        bool i2cSlave0Disable();
+        
+        bool slave0Enable();
+        bool slave0Disable();
+        uint8_t getSlave0Register();
+        bool setSlave0Register(uint8_t address);
+        bool disableSlave0Register();
+        bool enableSlave0Register();
+        void setSlave0WordGrouping(uint8_t order);
+        bool enableSlave0ByteSwap();
+        uint8_t getSlave0DataLenght();
+        void setSlave0DataLength(uint8_t length);
+        void slave0Write(uint8_t address, uint8_t _register, uint8_t data); // not tested
+        
+        
     private:
         void _write(uint8_t registerAddr, uint8_t data);
         int8_t _read(uint8_t registerAddr);
