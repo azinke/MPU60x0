@@ -1779,6 +1779,24 @@ bool MPU60x0::disableSlave4Interrupt(){
     _buffer &= ~(1<<6);
 }
 
+
+// Read external sensor data
+/**
+    function: getExternalSensorData
+    @summary: read a byte from an external sensor register given it's index
+    @parameter:
+        index: the relative position of the register from EXT_SENS_DATA_00
+               range: 0 - 23
+    @see: EXT_SENS_DATA_00 (in MPU60x0.h file)
+    @return:
+        int: the value of the choosen register
+             [-1]: wrong position given
+*/
+int MPU60x0::getExternalSensorData(uint8_t index){
+    if((index < 0) || (index > 23)) return -1;
+    return _read(EXT_SENS_DATA_00 + index);
+}
+
 /**
     ============================================================
                             STANDBY

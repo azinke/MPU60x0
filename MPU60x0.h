@@ -1,7 +1,7 @@
 /**
     Powered by SmartTech Benin
     @author: AMOUSSOU Z. Kenneth
-    @date: 19-08-2019
+    @date: 19-08-2018
     @version: 1.0
     
     @external-library:
@@ -287,6 +287,8 @@ class MPU60x0{
         uint8_t getSlave4Register();
         bool enableSlave4Interrupt();
         bool disableSlave4Interrupt();
+        
+        int getExternalSensorData(uint8_t index);
         
         bool setInterruptLevel(bool level);
         bool setInterruptPinState(bool state);
