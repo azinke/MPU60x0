@@ -1,7 +1,7 @@
 /**
     Powered by SmartTech Benin
     @author: AMOUSSOU Z. Kenneth
-    @date: 19-08-2019
+    @date: 19-08-2018
     @version: 1.0
     
     @external-library:
@@ -51,12 +51,10 @@ void MPU60x0::_write(uint8_t registerAddr, uint8_t data){
 int8_t MPU60x0::_read(uint8_t registerAddr){
     Wire.beginTransmission(ADDR);
     Wire.write(registerAddr);
-    Wire.endTransmission(true);
+    Wire.endTransmission(false);
     
     Wire.requestFrom(ADDR, 1, true);
-    //while(!Wire.available()){};
     _buffer = Wire.read();
-    Wire.endTransmission(true);
     return _buffer;
 }
 
@@ -79,7 +77,6 @@ void MPU60x0::_readBytes(uint8_t startAddr, uint8_t *buffer, uint8_t size){
     while(Wire.available() && i < size){
         buffer[i++] = Wire.read();    
     }
-    Wire.endTransmission(true);
 }
 
 /**
