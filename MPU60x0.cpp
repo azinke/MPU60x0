@@ -9,8 +9,9 @@
 */
 #include "MPU60x0.h"
 
-MPU60x0::MPU60x0(){
+MPU60x0::MPU60x0(bool enable_interrupt){
     Wire.begin();
+    _int = enable_interrupt;
 }
 
 /**
@@ -25,6 +26,7 @@ void MPU60x0::begin(){
     setClock(1);
     setGyroFSR(0);
     setAccelFSR(0);
+    if(_int) _init_timer2(); // Init interrupt
 }
 
 /**
@@ -54,8 +56,7 @@ int8_t MPU60x0::_read(uint8_t registerAddr){
     Wire.endTransmission(false);
     
     Wire.requestFrom(ADDR, 1, true);
-    _buffer = Wire.read();
-    return _buffer;
+    return Wire.read();
 }
 
 /**
@@ -77,6 +78,97 @@ void MPU60x0::_readBytes(uint8_t startAddr, uint8_t *buffer, uint8_t size){
     while(Wire.available() && i < size){
         buffer[i++] = Wire.read();    
     }
+}
+
+/**
+    function: _init_timer2
+    @summary: configure the timer2 for generating 200Hz interrupt to process 
+              data (gyroscope data)
+    @parameter: none
+    @return: none
+*/
+void MPU60x0::_init_timer2(){
+    #ifdef DEBUG
+        pinMode(13, OUTPUT);
+    #endif
+    cli(); // disable interrupt    
+    TCCR2A = 0x00; // normal mode usage
+    ASSR &= ~(1<<5); // clk_io
+    /*
+        Fosc = 16MHz
+        1 step = 64µs
+        78step ~ 4992µs
+    */
+    TCCR2B = 0x07;  // prescalar: 1024 
+    GTCCR &= ~(1<<7);
+    TCNT2 = (255 - 78);
+    TIFR2 = 0x00;
+    TIMSK2 = 0x01;
+    sei();
+}
+
+/**
+    function: _
+    @summary: Interrupt Service routine to handle Timer2 overflow interrupt
+    @parameter: none
+    @return: none
+*/
+SIGNAL(TIMER2_OVF_vect){
+    MPU60x0::handle_interrupt();
+}
+
+inline void MPU60x0::handle_interrupt(){
+    /* Compute the gyroscope data */
+   cli();
+ //  IMU_DATA data;// = MPU60x0::read();
+    /* 0.004992 ~ 0.005
+        Quite good approximation if we consider the time used for reading data 
+        form the sensor
+    */
+    MPU60x0::data.gyroX *= 0.005;
+    MPU60x0::data.gyroY *= 0.005;
+    MPU60x0::data.gyroZ *= 0.005;
+    
+    // Compute angles based on gyro only
+    MPU60x0::euler_angles.pitch += data.gyroX;
+    MPU60x0::euler_angles.roll += data.gyroY;
+    MPU60x0::euler_angles.yaw += data.gyroZ;
+    
+    TCNT2 = (255 - 78); 
+    sei();
+}
+
+/**
+    function: getYaw
+    @summary: read yaw angle
+    @parameter: none
+    @return:
+        int: yaw angle
+*/
+int MPU60x0::getYaw(){
+  //  return _yaw;
+}
+
+/**
+    function: getPitch
+    @summary: read pitch angle
+    @parameter: none
+    @return:
+        int: pitch angle
+*/
+int MPU60x0::getPitch(){
+  //  return _pitch;
+}
+
+/**
+    function: getRoll
+    @summary: read roll angle
+    @parameter: none
+    @return:
+        int: roll angle
+*/
+int MPU60x0::getRoll(){
+   // return _roll;
 }
 
 /**

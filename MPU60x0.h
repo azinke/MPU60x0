@@ -137,9 +137,15 @@ typedef struct{
     float gyroZ = 0;
 } IMU_DATA; 
 
+typedef struct Angle{
+    float yaw = 0;
+    float pitch = 0;
+    float roll = 0;
+} ANGLES;
+
 class MPU60x0{
     public:
-        MPU60x0();
+        MPU60x0(bool enable_interrupt);
         void begin();
         
         void configure(uint8_t ext_sync, uint8_t digital_low_pass_filter);
@@ -151,14 +157,18 @@ class MPU60x0{
         float getAccelSampleRate();
         
         void setGyroFSR(uint8_t value); // FSR: Full Scale Range
-        uint8_t getGyroFSR();
+        static uint8_t getGyroFSR();
         void setAccelFSR(uint8_t value);
-        uint8_t getAccelFSR();
+        static uint8_t getAccelFSR();
         
         int16_t getGyroX();
         int16_t getGyroY();
         int16_t getGyroZ();
         bool gyroReset();
+        
+        int getYaw();
+        int getPitch();
+        int getRoll();
         
         int16_t getAccelX();
         int16_t getAccelY();
@@ -200,8 +210,8 @@ class MPU60x0{
         uint8_t accelYSelfTest();
         uint8_t accelZSelfTest();
         
-        IMU_DATA getData(); // get all the data from the sensor
-        IMU_DATA read();    // compute sensor data and return them back
+        static IMU_DATA getData(); // get all the data from the sensor
+        static IMU_DATA read();    // compute sensor data and return them back
         
         bool enableAccelXStandby();
         bool enableAccelYStandby();
@@ -305,15 +315,20 @@ class MPU60x0{
         bool disableI2cMasterInterrupt();
         bool enableDataReadyInterrupt();
         bool disableDataReadyInterrupt();
-        uint8_t getInterruptStatus();        
+        uint8_t getInterruptStatus();     
         
+        static inline void handle_interrupt();// __attribute__((__always_inline__));
+        static IMU_DATA data;
     private:
-        void _write(uint8_t registerAddr, uint8_t data);
-        int8_t _read(uint8_t registerAddr);
-        void _readBytes(uint8_t startAddr, uint8_t *buffer, uint8_t size);
+        static void _write(uint8_t registerAddr, uint8_t data);
+        static int8_t _read(uint8_t registerAddr);
+        static void _readBytes(uint8_t startAddr, uint8_t *buffer, uint8_t size);
+        void _init_timer2();    // configure timer2 for timing purpose in the library
         uint8_t _buffer;
-        const uint16_t  ACCEL_SENSITIVITY[4] = { 16384 , 8192, 4096 , 2048 };
-        const uint16_t  GYRO_SENSITIVITY[4] = { 1310 , 655 , 328 , 164 }; // x10
+        bool _int;  // enabe interrupt interrupt
+        static ANGLES euler_angles;
+        static const uint16_t  ACCEL_SENSITIVITY[4] = { 16384 , 8192, 4096 , 2048 };
+        static const uint16_t  GYRO_SENSITIVITY[4] = { 1310 , 655 , 328 , 164 }; // x10
 };
 
 #endif
