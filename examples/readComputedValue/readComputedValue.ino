@@ -8,9 +8,10 @@
 #include <MPU60x0.h>
 #include <Wire.h>
 
-MPU60x0 mySensor;
+MPU60x0 mySensor(false); // disable interrupt
 
-IMU_DATA data;
+IMU_DATA MPU60x0::data;
+ANGLES MPU60x0::euler_angles;
 
 void setup() {
   /* Initialize serial communication */
@@ -28,6 +29,7 @@ void setup() {
 }
 
 void loop() {
+    
   /**
     Read the IMU sensor computed data
     
@@ -35,26 +37,27 @@ void loop() {
     Accelerometer:  m/s²
     Temperature:    °C 
   */
-  data = mySensor.read();
+  MPU60x0::data = mySensor.read(); 
+  
 
   Serial.print("Gyroscope x, y, z: ");
-  Serial.print(data.gyroX);
+  Serial.print(MPU60x0::data.gyroX);
   Serial.print(" °/s , ");
-  Serial.print(data.gyroY);
+  Serial.print(MPU60x0::data.gyroY);
   Serial.print(" °/s , ");
-  Serial.print(data.gyroZ);
+  Serial.print(MPU60x0::data.gyroZ);
   Serial.println(" °/s");
 
   Serial.print("Accelerometer x, y, z: ");
-  Serial.print(data.accelX);
+  Serial.print(MPU60x0::data.accelX);
   Serial.print(" m/s² , ");
-  Serial.print(data.accelY);
+  Serial.print(MPU60x0::data.accelY);
   Serial.print(" m/s² , ");
-  Serial.print(data.accelZ);
+  Serial.print(MPU60x0::data.accelZ);
   Serial.println(" m/s²");
 
   Serial.print("Temperature: ");
-  Serial.print(data.temp);
+  Serial.print(MPU60x0::data.temp);
   Serial.println(" °C");
 
   Serial.println();

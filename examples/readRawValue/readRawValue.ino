@@ -8,9 +8,13 @@
 #include <MPU60x0.h>
 #include <Wire.h>
 
-MPU60x0 mySensor;
+MPU60x0 mySensor(false);
 
-IMU_DATA data;
+// Static variables
+IMU_DATA MPU60x0::data;
+ANGLES MPU60x0::euler_angles;
+
+IMU_DATA rawData;
 
 void setup() {  
   Serial.begin(9600);
@@ -48,24 +52,24 @@ void loop() {
         }
     Use this data structure to retrieve the information needed
   */
-  data = mySensor.getData();
+  rawData = mySensor.getData();
 
   Serial.print("Gyroscope x, y, z: ");
-  Serial.print(data.gyroX);
+  Serial.print(rawData.gyroX);
   Serial.print(", ");
-  Serial.print(data.gyroY);
+  Serial.print(rawData.gyroY);
   Serial.print(", ");
-  Serial.println(data.gyroZ);
+  Serial.println(rawData.gyroZ);
 
   Serial.print("Accelerometer x, y, z: ");
-  Serial.print(data.accelX);
+  Serial.print(rawData.accelX);
   Serial.print(", ");
-  Serial.print(data.accelY);
+  Serial.print(rawData.accelY);
   Serial.print(", ");
-  Serial.println(data.accelZ);
+  Serial.println(rawData.accelZ);
 
   Serial.print("Temperature: ");
-  Serial.println(data.temp);
+  Serial.println(rawData.temp);
 
   Serial.println();
   
