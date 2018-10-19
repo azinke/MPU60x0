@@ -1,5 +1,4 @@
 /**
-    Powered by SmartTech Benin
     @author: AMOUSSOU Z. Kenneth
     @date: 19-08-2018
     @version: 1.0
