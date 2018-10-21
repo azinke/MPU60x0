@@ -61,7 +61,7 @@ Methods | Descriptions
 `getData()` | read raw data from the sensor
 `getGyroX()` | read gyroscope x-axis angular velocity
 `getGyroY()` | read gyroscope y-axis angular velocity
-`getGyroY()` | read gyroscope z-axis angular velocity
+`getGyroZ()` | read gyroscope z-axis angular velocity
 `getAccelX()` | get acceleration along the x-axis
 `getAccelY()` | get acceleration along the y-axis
 `getAccelZ()` | get acceleration along the z-axis
