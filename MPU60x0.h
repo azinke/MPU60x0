@@ -311,6 +311,9 @@ class MPU60x0{
         int8_t _read(uint8_t registerAddr);
         void _readBytes(uint8_t startAddr, uint8_t *buffer, uint8_t size);
         uint8_t _buffer;
+        uint8_t _gyroFsr;
+        uint8_t _accelFsr;
+        bool _isFSRUpdated;
         const uint16_t  ACCEL_SENSITIVITY[4] = { 16384 , 8192, 4096 , 2048 };
         const uint16_t  GYRO_SENSITIVITY[4] = { 1310 , 655 , 328 , 164 }; // x10
 };
