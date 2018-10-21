@@ -25,7 +25,7 @@ and a fullscale range of ±250, ±500, ±1000, and ±2000dps
 
 While preparing a more detailed Wiki page, some basics example of usage are in 
 the `examples` folder. However the table below show the most important data 
-structure and method available with this library.
+structure and methods available with this library.
 
 ### Basics
 
