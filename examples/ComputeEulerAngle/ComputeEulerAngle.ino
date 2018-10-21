@@ -2,17 +2,17 @@
     @author: AMOUSSOU Z. Kenneth
     @date: 07-10-2018
     @summary: Example program to compute Eurler's angle based on MPU60x0 sensor
+    @method: complementary filter
     @chip: tested on MPU6050
     @platform: Arduino
 */
 #include <MPU60x0.h>
 
-#define DT 0.004032// 0.002048
-
 /**
     @function prototype
 **/ 
 void initTimer2();
+
 
 MPU60x0 mySensor;
 
@@ -30,14 +30,11 @@ MPU60x0 mySensor;
         float gyroZ = 0;
     } IMU_DATA 
 */
-volatile IMU_DATA data;
+IMU_DATA data;
 
 /**
     Variables
 */
-unsigned long time;
-float dt = 0.0;   // tiny time difference in ms
-float acceleration = 0.0;
 float yaw = 0.0;
 float pitch = 0.0;
 float roll = 0.0;
@@ -45,14 +42,27 @@ float roll = 0.0;
 float accel_pitch = 0.0;
 float accel_roll = 0.0;
 
+// timer 2 interrupt notification flag in software
+volatile bool flag = false;
+
+/*
+ Sampling time in second (s)
+ This is calculate out of the timer 2 interrupt frequency
+     Fosc = 16MHz
+     prescaler = 1024
+     47 steps  -> 3.008ms (~ 332.4468085 Hz) **
+     TCNT2 = (255 - 47)
+     sampling time = 3.008ms = 0.003008s
+*/ 
+const float SAMPLING_TIME = 0.003008;
+
 /* get gyroscope offset */
-float gyro_x_offset = 0;
-float gyro_y_offset = 0;
-float gyro_z_offset = 0;
+float gyro_x_offset = 0.0;
+float gyro_y_offset = 0.0;
+float gyro_z_offset = 0.0;
 
 unsigned int i = 0;
-
-unsigned long counter = 0; // used to delay the display rate of data
+volatile uint8_t counter = 0; // used to delay the display rate of angles
 
 void setup(){
    /* Initialize serial communication */
@@ -73,12 +83,14 @@ void setup(){
   Serial.println(mySensor.whoami(), HEX);
   
   /* get Gyroscope's offset */
-  for(i = 0; i <= 2000; i++){
+  for(i = 0; i <= 200; i++){
     data = mySensor.read();
     gyro_x_offset += data.gyroX;
     gyro_y_offset += data.gyroY;
     gyro_z_offset += data.gyroZ;
-    delay(1);   // 1 ms
+    // delay of 3ms
+    // same value as the sampling time
+    delay(3);   // 3 ms
   }
   gyro_x_offset /= i;
   gyro_y_offset /= i;
@@ -88,28 +100,38 @@ void setup(){
 }
 
 void loop(){
+    if(flag){
+        data = mySensor.read();     // read new data
+        
+        // Process new data to get Euler's angles
+        accel_roll = (float)atan2(-data.accelY, data.accelZ);
+        accel_roll *= 180;
+        accel_roll /= PI;
+        
+        accel_pitch = (float)atan2(data.accelX, sqrt(data.accelY * data.accelY \
+                                    + data.accelZ * data.accelZ));
+        accel_pitch *= 180;
+        accel_pitch /= PI;
+        
+        // yaw angle drift
+        // Not compensated
+        yaw += (float)(data.gyroZ - gyro_z_offset) * SAMPLING_TIME;    
+        
+        pitch = (0.98*( pitch + (data.gyroY - gyro_y_offset) * SAMPLING_TIME))\
+                 + 0.02 * accel_pitch;
+        roll = (0.98*( roll + (data.gyroX - gyro_x_offset) * SAMPLING_TIME))\
+                 + 0.02 * accel_roll;
+        flag = false;
+    }
     
-    
-    /*
-    accel_pitch = (float)atan2(data.accelY, data.accelZ);
-    accel_pitch *= 180;
-    accel_pitch /= PI;
-    pitch = 0.98 * (pitch + (data.gyroY - gyro_y_offset) * (dt/1000000.0)) + 0.02 * accel_pitch;
-    
-    accel_roll = (float)atan2(data.accelX, sqrt(data.accelY * data.accelY + data.accelZ * data.accelZ));
-    accel_roll *= 180;
-    accel_roll /= PI;
-    roll = 0.98 * (roll + (data.gyroZ - gyro_z_offset) * (dt/1000000.0)) + 0.02 * accel_roll;
-    */
-    counter++;
-    if(counter >= 400){
+    // print out angles
+    if(counter >= 100){   // every ~300ms
         Serial.println("Yaw: " + String(yaw) + "°");
         Serial.println("Pitch: " + String(pitch) + "°");
         Serial.println("Roll: " + String(roll) + "°");
         Serial.println();
         counter = 0;
     }
-    delay(1);   // 1 ms delay
 }
 
 /**
@@ -127,9 +149,10 @@ void initTimer2(){
         prescaler = 1024
         256 steps -> 16.384ms
         32 steps  -> 2.048ms (~ 488.28125 Hz)
-        63 steps  -> 4.032ms (~ 248.015873 Hz)
+        47 steps  -> 3.008ms (~ 332.4468085 Hz) **
+        63 steps  -> 4.032ms (~ 248.015873 Hz) 
     **/
-    TCNT2 = (255 - 63);
+    TCNT2 = (255 - 47);
     GTCCR &= ~(1<<7);   // disable timer 2 prescaler reset
     TCCR2B = 0x07;
     TIFR2 = 0x00;
@@ -137,14 +160,15 @@ void initTimer2(){
     sei();
 }
 
+/**
+    Interrupt Service Routine
+    @vector: timer 2 vector
+**/
 SIGNAL(TIMER2_OVF_vect){
     cli();                      // disable interrupt
     TIFR2 = 0x00;               // clear interrupt flag
-    data = mySensor.read();     // read new data
-    // Process new data to get Euler's angles
-    yaw += (data.gyroZ - gyro_z_offset) * DT;
-    pitch += (data.gyroY - gyro_y_offset) * DT;
-    roll += (data.gyroX - gyro_x_offset) * DT;    
-    TCNT2 = (255 - 63);         // reset timer2 counter register
+    flag = true;
+    counter++;
+    TCNT2 = (255 - 47);         // reset timer2 counter register
     sei();                      // enable interrupt
 }
