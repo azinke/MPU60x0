@@ -97,7 +97,7 @@ void MPU60x0::_readBytes(uint8_t startAddr, uint8_t *buffer, uint8_t size){
         uint8_t: byte read form the sensor
 */
 void MPU60x0::configure(uint8_t ext_sync, uint8_t digital_low_pass_filter){
-    _buffer = (ext_sync << 3) + digital_low_pass_filter;
+    _buffer = (ext_sync << 3) | digital_low_pass_filter;
     _write(CONFIG, _buffer);
 }
 
@@ -277,8 +277,8 @@ uint8_t MPU60x0::getAccelFSR(){
 */
 int16_t MPU60x0::getAccelX(){
     int16_t buffer = 0;
-    buffer = (_read(ACCEL_XOUT_H) << 8);
-    return buffer + _read(ACCEL_XOUT_L);    
+    buffer = ((uint16_t)_read(ACCEL_XOUT_H) << 8);
+    return buffer | _read(ACCEL_XOUT_L);    
 }
 
 /**
@@ -290,8 +290,8 @@ int16_t MPU60x0::getAccelX(){
 */
 int16_t MPU60x0::getAccelY(){
     int16_t buffer = 0;
-    buffer = _read(ACCEL_YOUT_H) << 8;
-    return buffer + _read(ACCEL_YOUT_L);    
+    buffer = (uint16_t)_read(ACCEL_YOUT_H) << 8;
+    return buffer | _read(ACCEL_YOUT_L);    
 }
 
 /**
@@ -303,8 +303,8 @@ int16_t MPU60x0::getAccelY(){
 */
 int16_t MPU60x0::getAccelZ(){
     int16_t buffer = 0;
-    buffer = _read(ACCEL_ZOUT_H) << 8;
-    return buffer + _read(ACCEL_ZOUT_L);    
+    buffer = (uint16_t)_read(ACCEL_ZOUT_H) << 8;
+    return buffer | _read(ACCEL_ZOUT_L);    
 }
 
 /**
@@ -330,8 +330,8 @@ bool MPU60x0::gyroReset(){
 */
 int16_t MPU60x0::getGyroX(){
     int16_t buffer = 0;
-    buffer = _read(GYRO_XOUT_H) << 8;
-    return buffer + _read(GYRO_XOUT_L);    
+    buffer = (uint16_t)_read(GYRO_XOUT_H) << 8;
+    return buffer | _read(GYRO_XOUT_L);    
 }
 
 /**
@@ -343,8 +343,8 @@ int16_t MPU60x0::getGyroX(){
 */
 int16_t MPU60x0::getGyroY(){
     int16_t buffer = 0;
-    buffer = _read(GYRO_YOUT_H) << 8;
-    return buffer + _read(GYRO_YOUT_L);    
+    buffer = (uint16_t)_read(GYRO_YOUT_H) << 8;
+    return buffer | _read(GYRO_YOUT_L);    
 }
 
 /**
@@ -356,8 +356,8 @@ int16_t MPU60x0::getGyroY(){
 */
 int16_t MPU60x0::getGyroZ(){
     int16_t buffer = 0;
-    buffer = _read(GYRO_ZOUT_H) << 8;
-    return buffer + _read(GYRO_ZOUT_L);    
+    buffer = (uint8_t)_read(GYRO_ZOUT_H) << 8;
+    return buffer | _read(GYRO_ZOUT_L);    
 }
 
 /**
@@ -383,8 +383,8 @@ bool MPU60x0::accelReset(){
 */
 float MPU60x0::getTemp(){
     int16_t buffer = 0;
-    buffer = _read(TEMP_OUT_H) << 8;
-    buffer += _read(TEMP_OUT_L);
+    buffer = (uint16_t)_read(TEMP_OUT_H) << 8;
+    buffer |= _read(TEMP_OUT_L);
     return (float)(buffer/340 + 36.53 );    
 }
 
@@ -478,7 +478,7 @@ bool MPU60x0::disableSleepMode(){
 void MPU60x0::setClock(uint8_t value){
     _buffer = _read(PWR_MGMT_1);
     _buffer = _buffer >> 3;
-    _buffer = (_buffer << 3) + (0x07 && value);
+    _buffer = (_buffer << 3) | (0x07 && value);
     _write(PWR_MGMT_1, _buffer);    
 }
 
@@ -665,8 +665,8 @@ bool MPU60x0::enableSlave0Fifo(){
 */
 int16_t MPU60x0::readFifo(){
     /* read Fifo */
-    int16_t buffer = _read(FIFO_R_W) << 8;
-    return (buffer + _read(FIFO_R_W));
+    int16_t buffer = (uint16_t)_read(FIFO_R_W) << 8;
+    return (buffer | _read(FIFO_R_W));
 }
 
 /**
@@ -704,15 +704,15 @@ IMU_DATA MPU60x0::getData(){
     } registers;
     _readBytes(ACCEL_XOUT_H, (uint8_t*) &registers, sizeof(registers));
     IMU_DATA buffer;   
-    buffer.accelX = (registers.accelX_H << 8) + registers.accelX_L;
-    buffer.accelY = (registers.accelY_H << 8) + registers.accelY_L;
-    buffer.accelZ = (registers.accelZ_H << 8) + registers.accelZ_L;
+    buffer.accelX = ((uint16_t)registers.accelX_H << 8) | registers.accelX_L;
+    buffer.accelY = ((uint16_t)registers.accelY_H << 8) | registers.accelY_L;
+    buffer.accelZ = ((uint16_t)registers.accelZ_H << 8) | registers.accelZ_L;
     
-    buffer.temp = (registers.temp_H << 8) + registers.temp_L;
+    buffer.temp = ((uint16_t)registers.temp_H << 8) | registers.temp_L;
     
-    buffer.gyroX = (registers.gyroX_H << 8) + registers.gyroX_L;
-    buffer.gyroY = (registers.gyroY_H << 8) + registers.gyroY_L;
-    buffer.gyroZ = (registers.gyroZ_H << 8) + registers.gyroZ_L;
+    buffer.gyroX = ((uint16_t)registers.gyroX_H << 8) | registers.gyroX_L;
+    buffer.gyroY = ((uint16_t)registers.gyroY_H << 8) | registers.gyroY_L;
+    buffer.gyroZ = ((uint16_t)registers.gyroZ_H << 8) | registers.gyroZ_L;
     return buffer;
 }
 
@@ -834,7 +834,7 @@ uint8_t MPU60x0::accelXSelfTest(){
     _buffer |= (1 << 7);
     _write(GYRO_CONFIG, _buffer);
     test_value = (_read(SELF_TEST_X) && 0xE0) >> 3;
-    test_value += (_read(SELF_TEST_A) && 0x30) >> 4;
+    test_value |= (_read(SELF_TEST_A) && 0x30) >> 4;
     _buffer &= ~(1 << 7);
     _write(GYRO_CONFIG, _buffer);
     setAccelFSR(fsr); // set FSR to the default value
@@ -857,7 +857,7 @@ uint8_t MPU60x0::accelYSelfTest(){
     _buffer |= (1 << 6);
     _write(GYRO_CONFIG, _buffer);
     test_value = (_read(SELF_TEST_Y) && 0xE0) >> 3;
-    test_value += (_read(SELF_TEST_A) && 0x0C) >> 2;
+    test_value |= (_read(SELF_TEST_A) && 0x0C) >> 2;
     _buffer &= ~(1 << 6);
     _write(GYRO_CONFIG, _buffer);
     setAccelFSR(fsr); // set FSR to the default value
@@ -880,7 +880,7 @@ uint8_t MPU60x0::accelZSelfTest(){
     _buffer |= (1 << 5);
     _write(GYRO_CONFIG, _buffer);
     test_value = (_read(SELF_TEST_Y) && 0xE0) >> 3;
-    test_value += (_read(SELF_TEST_A) && 0x03);
+    test_value |= (_read(SELF_TEST_A) && 0x03);
     _buffer &= ~(1 << 5);
     _write(GYRO_CONFIG, _buffer);
     setAccelFSR(fsr); // set FSR to the default value
@@ -946,8 +946,9 @@ bool MPU60x0::i2cMultiMasterDisable(){
         bool: return true on success
 */
 bool MPU60x0::i2cMasterClock(uint8_t clock){
+	// TODO: set a contrain checking for clock value
     _buffer = _read(I2C_MST_CTRL);
-    _buffer = (_buffer && 0xF0) + clock;    
+    _buffer = (_buffer && 0xF0) | clock;    
     _write(I2C_MST_CTRL, _buffer);
     return 1;
 }
@@ -965,7 +966,7 @@ bool MPU60x0::i2cMasterClock(uint8_t clock){
 */
 bool MPU60x0::i2cSetMasterDelay(uint8_t divider){
     _buffer = _read(I2C_SLV4_CTRL);
-    _buffer = (_buffer && 0x70) + (divider && 0x1F);
+    _buffer = (_buffer && 0x70) | (divider && 0x1F);
     _write(I2C_SLV4_CTRL, _buffer);
     return 1;
 }
