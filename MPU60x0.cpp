@@ -277,7 +277,7 @@ uint8_t MPU60x0::getAccelFSR(){
 */
 int16_t MPU60x0::getAccelX(){
     int16_t buffer = 0;
-    buffer = ((uint16_t)_read(ACCEL_XOUT_H) << 8);
+    buffer = (_read(ACCEL_XOUT_H) << 8);
     return buffer | _read(ACCEL_XOUT_L);    
 }
 
@@ -290,7 +290,7 @@ int16_t MPU60x0::getAccelX(){
 */
 int16_t MPU60x0::getAccelY(){
     int16_t buffer = 0;
-    buffer = (uint16_t)_read(ACCEL_YOUT_H) << 8;
+    buffer = _read(ACCEL_YOUT_H) << 8;
     return buffer | _read(ACCEL_YOUT_L);    
 }
 
@@ -303,7 +303,7 @@ int16_t MPU60x0::getAccelY(){
 */
 int16_t MPU60x0::getAccelZ(){
     int16_t buffer = 0;
-    buffer = (uint16_t)_read(ACCEL_ZOUT_H) << 8;
+    buffer = _read(ACCEL_ZOUT_H) << 8;
     return buffer | _read(ACCEL_ZOUT_L);    
 }
 
@@ -330,7 +330,7 @@ bool MPU60x0::gyroReset(){
 */
 int16_t MPU60x0::getGyroX(){
     int16_t buffer = 0;
-    buffer = (uint16_t)_read(GYRO_XOUT_H) << 8;
+    buffer = _read(GYRO_XOUT_H) << 8;
     return buffer | _read(GYRO_XOUT_L);    
 }
 
@@ -343,7 +343,7 @@ int16_t MPU60x0::getGyroX(){
 */
 int16_t MPU60x0::getGyroY(){
     int16_t buffer = 0;
-    buffer = (uint16_t)_read(GYRO_YOUT_H) << 8;
+    buffer = _read(GYRO_YOUT_H) << 8;
     return buffer | _read(GYRO_YOUT_L);    
 }
 
@@ -356,7 +356,7 @@ int16_t MPU60x0::getGyroY(){
 */
 int16_t MPU60x0::getGyroZ(){
     int16_t buffer = 0;
-    buffer = (uint8_t)_read(GYRO_ZOUT_H) << 8;
+    buffer = _read(GYRO_ZOUT_H) << 8;
     return buffer | _read(GYRO_ZOUT_L);    
 }
 
@@ -383,7 +383,7 @@ bool MPU60x0::accelReset(){
 */
 float MPU60x0::getTemp(){
     int16_t buffer = 0;
-    buffer = (uint16_t)_read(TEMP_OUT_H) << 8;
+    buffer = _read(TEMP_OUT_H) << 8;
     buffer |= _read(TEMP_OUT_L);
     return (float)(buffer/340 + 36.53 );    
 }
@@ -665,7 +665,7 @@ bool MPU60x0::enableSlave0Fifo(){
 */
 int16_t MPU60x0::readFifo(){
     /* read Fifo */
-    int16_t buffer = (uint16_t)_read(FIFO_R_W) << 8;
+    int16_t buffer = _read(FIFO_R_W) << 8;
     return (buffer | _read(FIFO_R_W));
 }
 
@@ -704,15 +704,15 @@ IMU_DATA MPU60x0::getData(){
     } registers;
     _readBytes(ACCEL_XOUT_H, (uint8_t*) &registers, sizeof(registers));
     IMU_DATA buffer;   
-    buffer.accelX = ((uint16_t)registers.accelX_H << 8) | registers.accelX_L;
-    buffer.accelY = ((uint16_t)registers.accelY_H << 8) | registers.accelY_L;
-    buffer.accelZ = ((uint16_t)registers.accelZ_H << 8) | registers.accelZ_L;
+    buffer.accelX = (registers.accelX_H << 8) | registers.accelX_L;
+    buffer.accelY = (registers.accelY_H << 8) | registers.accelY_L;
+    buffer.accelZ = (registers.accelZ_H << 8) | registers.accelZ_L;
     
-    buffer.temp = ((uint16_t)registers.temp_H << 8) | registers.temp_L;
+    buffer.temp = (registers.temp_H << 8) | registers.temp_L;
     
-    buffer.gyroX = ((uint16_t)registers.gyroX_H << 8) | registers.gyroX_L;
-    buffer.gyroY = ((uint16_t)registers.gyroY_H << 8) | registers.gyroY_L;
-    buffer.gyroZ = ((uint16_t)registers.gyroZ_H << 8) | registers.gyroZ_L;
+    buffer.gyroX = (registers.gyroX_H << 8) | registers.gyroX_L;
+    buffer.gyroY = (registers.gyroY_H << 8) | registers.gyroY_L;
+    buffer.gyroZ = (registers.gyroZ_H << 8) | registers.gyroZ_L;
     return buffer;
 }
 
