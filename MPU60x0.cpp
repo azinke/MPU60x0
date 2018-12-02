@@ -20,12 +20,17 @@ MPU60x0::MPU60x0(){
 */
 void MPU60x0::begin(){
     configure(0, 1);
+    // disable sleep mode
     disableSleepMode();
     setClock(1);
     setGyroFSR(0);
     setAccelFSR(0);
     _gyroFsr = 0;
     _accelFsr = 0;
+    // read sensitivity from PROGMEM
+    _accel_sensitivity = pgm_read_word(ACCEL_SENSITIVITY[_accelFsr]);
+    _gyro_sensitivity = pgm_read_word(GYRO_SENSITIVITY[_gyroFsr]);
+    // disable sensor's sensitivity read on every data pulling
     _isFSRUpdated = false;
 }
 
@@ -725,7 +730,9 @@ IMU_DATA MPU60x0::getData(){
         
         Acceleration:   in m/s²
         Temperature:    in °C
-        Gyrocope:       in °/s    
+        Gyrocope:       in °/s
+    @dependency: pgmspace.h
+                 pgm_read_word: to read sensor's sensitivity from PROGMEM 
 */
 IMU_DATA MPU60x0::read(){
     IMU_DATA buffer = getData();
@@ -733,14 +740,16 @@ IMU_DATA MPU60x0::read(){
     if(_isFSRUpdated){
         _gyroFsr = getGyroFSR();
         _accelFsr = getAccelFSR();
+        _accel_sensitivity = pgm_read_word(ACCEL_SENSITIVITY[_accelFsr]);
+        _gyro_sensitivity = pgm_read_word(GYRO_SENSITIVITY[_gyroFsr]);
     }
-    buffer.accelX = (float)(buffer.accelX/ACCEL_SENSITIVITY[_accelFsr]) * 9.81;
-    buffer.accelY = (float)(buffer.accelY/ACCEL_SENSITIVITY[_accelFsr]) * 9.81;
-    buffer.accelZ = (float)(buffer.accelZ/ACCEL_SENSITIVITY[_accelFsr]) * 9.81;
+    buffer.accelX = (float)(buffer.accelX/_accel_sensitivity) * 9.81;
+    buffer.accelY = (float)(buffer.accelY/_accel_sensitivity) * 9.81;
+    buffer.accelZ = (float)(buffer.accelZ/_accel_sensitivity) * 9.81;
     
-    buffer.gyroX = (float)(buffer.gyroX * 10.0)/GYRO_SENSITIVITY[_gyroFsr];
-    buffer.gyroY = (float)(buffer.gyroY * 10.0)/GYRO_SENSITIVITY[_gyroFsr];
-    buffer.gyroZ = (float)(buffer.gyroZ * 10.0)/GYRO_SENSITIVITY[_gyroFsr];
+    buffer.gyroX = (float)(buffer.gyroX * 10.0)/_gyro_sensitivity;
+    buffer.gyroY = (float)(buffer.gyroY * 10.0)/_gyro_sensitivity;
+    buffer.gyroZ = (float)(buffer.gyroZ * 10.0)/_gyro_sensitivity;
 
     buffer.temp = (float)(buffer.temp/340) + 36.53;
     return buffer;

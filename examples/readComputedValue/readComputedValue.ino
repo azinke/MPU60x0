@@ -21,7 +21,11 @@ void setup() {
   */
   mySensor.begin();
   
-  
+  /* Check correct wiring of the sensor */
+  while(mySensor.whoami() != ADDR){
+    Serial.println("MPU60x0 not found!");
+    delay(200);     // 200ms
+  }
   /* Read device I2C adress */
   Serial.print("Sensor ADDR: 0x");
   Serial.println(mySensor.whoami(), HEX);

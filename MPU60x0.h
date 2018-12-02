@@ -8,13 +8,17 @@
 */
 #ifndef H_MPU60x0
 #define H_MPU60x0
-
+#include <avr/pgmspace.h>
 #include <Wire.h>
 
 #if ARDUINO < 100
 #include <WProgram.h>
 #else
 #include <Arduino.h>
+#endif
+
+#ifdef ENERGIA
+#include <Energia.h>
 #endif
 
 #define DEBUG
@@ -123,17 +127,19 @@
 
 #define GRAVITY             9.81
 
+const PROGMEM uint16_t ACCEL_SENSITIVITY[4] = { 16384 , 8192, 4096 , 2048 };
+const PROGMEM uint16_t GYRO_SENSITIVITY[4] = { 1310 , 655 , 328 , 164 }; // x10
 
 typedef struct{
-    float accelX = 0;
-    float accelY = 0;
-    float accelZ = 0;
+    float accelX;
+    float accelY;
+    float accelZ;
     
-    float temp = 0;
+    float temp;
     
-    float gyroX = 0;
-    float gyroY = 0;
-    float gyroZ = 0;
+    float gyroX;
+    float gyroY;
+    float gyroZ;
 } IMU_DATA; 
 
 class MPU60x0{
@@ -314,8 +320,8 @@ class MPU60x0{
         uint8_t _gyroFsr;
         uint8_t _accelFsr;
         bool _isFSRUpdated;
-        const uint16_t  ACCEL_SENSITIVITY[4] = { 16384 , 8192, 4096 , 2048 };
-        const uint16_t  GYRO_SENSITIVITY[4] = { 1310 , 655 , 328 , 164 }; // x10
+        uint16_t _accel_sensitivity;
+        uint16_t _gyro_sensitivity;
 };
 
 #endif
