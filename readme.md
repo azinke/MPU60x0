@@ -57,7 +57,7 @@ Methods | Descriptions
 :-------|:--------------
 `begin()` | Initialize the sensor with default configurations
 `whoami()` | Read the sensor's I2C address - Could be used to check correct wiring of the sensor
-`read()` | read pre-processed data from the sensor (angular velocity in `°/s`, acceleration in `m/s²`, temperature in `°C`)
+`read()` | read pre-processed data from the sensor (angular velocity in `°/s`, acceleration in `g`, temperature in `°C`)
 `getData()` | read raw data from the sensor
 `getGyroX()` | read gyroscope x-axis angular velocity
 `getGyroY()` | read gyroscope y-axis angular velocity

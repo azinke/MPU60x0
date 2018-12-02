@@ -8,7 +8,6 @@
 */
 #ifndef H_MPU60x0
 #define H_MPU60x0
-#include <avr/pgmspace.h>
 #include <Wire.h>
 
 #if ARDUINO < 100
@@ -21,7 +20,7 @@
 #include <Energia.h>
 #endif
 
-#define DEBUG
+//#define DEBUG
 
 /** Device I2C address **/
 #define ADDR_L
@@ -127,8 +126,8 @@
 
 #define GRAVITY             9.81
 
-const PROGMEM uint16_t ACCEL_SENSITIVITY[4] = { 16384 , 8192, 4096 , 2048 };
-const PROGMEM uint16_t GYRO_SENSITIVITY[4] = { 1310 , 655 , 328 , 164 }; // x10
+const uint16_t ACCEL_SENSITIVITY[4] = { 16384 , 8192, 4096 , 2048 };
+const uint16_t GYRO_SENSITIVITY[4] = { 1310 , 655 , 328 , 164 }; // x10
 
 typedef struct{
     float accelX;

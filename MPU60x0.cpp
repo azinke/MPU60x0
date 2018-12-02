@@ -28,8 +28,8 @@ void MPU60x0::begin(){
     _gyroFsr = 0;
     _accelFsr = 0;
     // read sensitivity from PROGMEM
-    _accel_sensitivity = pgm_read_word(ACCEL_SENSITIVITY[_accelFsr]);
-    _gyro_sensitivity = pgm_read_word(GYRO_SENSITIVITY[_gyroFsr]);
+    _accel_sensitivity = ACCEL_SENSITIVITY[_accelFsr];
+    _gyro_sensitivity = GYRO_SENSITIVITY[_gyroFsr];
     // disable sensor's sensitivity read on every data pulling
     _isFSRUpdated = false;
 }
@@ -728,7 +728,7 @@ IMU_DATA MPU60x0::getData(){
     @return:
         DATA: return proccessed IMU (Inertial Measurment Unit) data
         
-        Acceleration:   in m/s²
+        Acceleration:   in g (with g in m/s²) g: earth gravity
         Temperature:    in °C
         Gyrocope:       in °/s
     @dependency: pgmspace.h
@@ -740,12 +740,16 @@ IMU_DATA MPU60x0::read(){
     if(_isFSRUpdated){
         _gyroFsr = getGyroFSR();
         _accelFsr = getAccelFSR();
-        _accel_sensitivity = pgm_read_word(ACCEL_SENSITIVITY[_accelFsr]);
-        _gyro_sensitivity = pgm_read_word(GYRO_SENSITIVITY[_gyroFsr]);
+        _accel_sensitivity = ACCEL_SENSITIVITY[_accelFsr];
+        _gyro_sensitivity = GYRO_SENSITIVITY[_gyroFsr];
     }
-    buffer.accelX = (float)(buffer.accelX/_accel_sensitivity) * 9.81;
-    buffer.accelY = (float)(buffer.accelY/_accel_sensitivity) * 9.81;
-    buffer.accelZ = (float)(buffer.accelZ/_accel_sensitivity) * 9.81;
+    #ifdef DEBUG
+        Serial.print("Accel sensitivity: ");
+        Serial.println(_accel_sensitivity);
+    #endif
+    buffer.accelX = (float)buffer.accelX/_accel_sensitivity;
+    buffer.accelY = (float)buffer.accelY/_accel_sensitivity;
+    buffer.accelZ = (float)buffer.accelZ/_accel_sensitivity;
     
     buffer.gyroX = (float)(buffer.gyroX * 10.0)/_gyro_sensitivity;
     buffer.gyroY = (float)(buffer.gyroY * 10.0)/_gyro_sensitivity;
