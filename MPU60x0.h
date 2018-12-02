@@ -20,7 +20,7 @@
 #include <Energia.h>
 #endif
 
-#define DEBUG
+//#define DEBUG
 
 /** Device I2C address **/
 #define ADDR_L
