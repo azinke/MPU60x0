@@ -728,7 +728,7 @@ IMU_DATA MPU60x0::getData(){
     @return:
         DATA: return proccessed IMU (Inertial Measurment Unit) data
         
-        Acceleration:   in m/s²
+        Acceleration:   in g (with g in m/s²) g: earth gravity
         Temperature:    in °C
         Gyrocope:       in °/s
     @dependency: pgmspace.h
@@ -743,9 +743,9 @@ IMU_DATA MPU60x0::read(){
         _accel_sensitivity = pgm_read_word(ACCEL_SENSITIVITY[_accelFsr]);
         _gyro_sensitivity = pgm_read_word(GYRO_SENSITIVITY[_gyroFsr]);
     }
-    buffer.accelX = (float)(buffer.accelX/_accel_sensitivity) * 9.81;
-    buffer.accelY = (float)(buffer.accelY/_accel_sensitivity) * 9.81;
-    buffer.accelZ = (float)(buffer.accelZ/_accel_sensitivity) * 9.81;
+    buffer.accelX = (float)buffer.accelX/_accel_sensitivity;
+    buffer.accelY = (float)buffer.accelY/_accel_sensitivity;
+    buffer.accelZ = (float)buffer.accelZ/_accel_sensitivity;
     
     buffer.gyroX = (float)(buffer.gyroX * 10.0)/_gyro_sensitivity;
     buffer.gyroY = (float)(buffer.gyroY * 10.0)/_gyro_sensitivity;

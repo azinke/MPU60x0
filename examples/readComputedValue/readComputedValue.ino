@@ -36,7 +36,7 @@ void loop() {
     Read the IMU sensor computed data
     
     Gyroscope:      °/s (degree per second)
-    Accelerometer:  m/s²
+    Accelerometer:  g
     Temperature:    °C 
   */
   data = mySensor.read();
@@ -51,11 +51,11 @@ void loop() {
 
   Serial.print("Accelerometer x, y, z: ");
   Serial.print(data.accelX);
-  Serial.print(" m/s² , ");
+  Serial.print(" g , ");
   Serial.print(data.accelY);
-  Serial.print(" m/s² , ");
+  Serial.print(" g , ");
   Serial.print(data.accelZ);
-  Serial.println(" m/s²");
+  Serial.println(" g");
 
   Serial.print("Temperature: ");
   Serial.print(data.temp);
