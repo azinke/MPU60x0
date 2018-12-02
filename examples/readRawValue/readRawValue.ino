@@ -24,6 +24,11 @@ void setup() {
 
     # Check your connection if you get different value. #
   */
+  /* Check correct wiring of the sensor */
+  while(mySensor.whoami() != ADDR){
+    Serial.println("MPU60x0 not found!");
+    delay(200);     // 200ms
+  }
   Serial.print("Sensor ADDR: 0x");
   Serial.println(mySensor.whoami(), HEX);
 }
