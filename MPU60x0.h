@@ -20,7 +20,7 @@
 #include <Energia.h>
 #endif
 
-//#define DEBUG
+// #define DEBUG
 
 /** Device I2C address **/
 #define ADDR_L
@@ -313,7 +313,7 @@ class MPU60x0{
         
     private:
         void _write(uint8_t registerAddr, uint8_t data);
-        int8_t _read(uint8_t registerAddr);
+        uint8_t _read(uint8_t registerAddr);
         void _readBytes(uint8_t startAddr, uint8_t *buffer, uint8_t size);
         uint8_t _buffer;
         uint8_t _gyroFsr;

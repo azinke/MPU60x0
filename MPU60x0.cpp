@@ -22,7 +22,7 @@ void MPU60x0::begin(){
     configure(0, 1);
     // disable sleep mode
     disableSleepMode();
-    setClock(1);
+    setClock(0); // internal 8MHz
     setGyroFSR(0);
     setAccelFSR(0);
     _gyroFsr = 0;
@@ -55,7 +55,7 @@ void MPU60x0::_write(uint8_t registerAddr, uint8_t data){
     @return:
         uint8_t: byte read form the sensor
 */
-int8_t MPU60x0::_read(uint8_t registerAddr){
+uint8_t MPU60x0::_read(uint8_t registerAddr){
     Wire.beginTransmission(ADDR);
     Wire.write(registerAddr);
     Wire.endTransmission(false);
@@ -388,9 +388,14 @@ bool MPU60x0::accelReset(){
 */
 float MPU60x0::getTemp(){
     int16_t buffer = 0;
-    buffer = _read(TEMP_OUT_H) << 8;
+    buffer = _read(TEMP_OUT_H);
+    buffer <<= 8;
     buffer |= _read(TEMP_OUT_L);
-    return (float)(buffer/340 + 36.53 );    
+    #ifdef DEBUG
+        Serial.print("raw temperature: ");
+        Serial.println(buffer);
+    #endif
+    return ((float)buffer/340.0 + 36.53 );    
 }
 
 /**
@@ -692,19 +697,19 @@ int16_t MPU60x0::readFifo(){
 */
 IMU_DATA MPU60x0::getData(){
     struct {
-        uint8_t accelX_H;
+        int8_t accelX_H;
         uint8_t accelX_L;
-        uint8_t accelY_H;
+        int8_t accelY_H;
         uint8_t accelY_L;
-        uint8_t accelZ_H;
+        int8_t accelZ_H;
         uint8_t accelZ_L;
-        uint8_t temp_H;
+        int8_t temp_H;
         uint8_t temp_L;
-        uint8_t gyroX_H;
+        int8_t gyroX_H;
         uint8_t gyroX_L;
-        uint8_t gyroY_H;
+        int8_t gyroY_H;
         uint8_t gyroY_L;
-        uint8_t gyroZ_H;
+        int8_t gyroZ_H;
         uint8_t gyroZ_L;
     } registers;
     _readBytes(ACCEL_XOUT_H, (uint8_t*) &registers, sizeof(registers));
@@ -746,16 +751,18 @@ IMU_DATA MPU60x0::read(){
     #ifdef DEBUG
         Serial.print("Accel sensitivity: ");
         Serial.println(_accel_sensitivity);
+        Serial.print("Gyro sensitivity: ");
+        Serial.println(_gyro_sensitivity);
     #endif
-    buffer.accelX = (float)buffer.accelX/_accel_sensitivity;
-    buffer.accelY = (float)buffer.accelY/_accel_sensitivity;
-    buffer.accelZ = (float)buffer.accelZ/_accel_sensitivity;
+    buffer.accelX = (float)(buffer.accelX/_accel_sensitivity);
+    buffer.accelY = (float)(buffer.accelY/_accel_sensitivity);
+    buffer.accelZ = (float)(buffer.accelZ/_accel_sensitivity);
     
-    buffer.gyroX = (float)(buffer.gyroX * 10.0)/_gyro_sensitivity;
-    buffer.gyroY = (float)(buffer.gyroY * 10.0)/_gyro_sensitivity;
-    buffer.gyroZ = (float)(buffer.gyroZ * 10.0)/_gyro_sensitivity;
+    buffer.gyroX = (float)((buffer.gyroX * 10.0)/_gyro_sensitivity);
+    buffer.gyroY = (float)((buffer.gyroY * 10.0)/_gyro_sensitivity);
+    buffer.gyroZ = (float)((buffer.gyroZ * 10.0)/_gyro_sensitivity);
 
-    buffer.temp = (float)(buffer.temp/340) + 36.53;
+    buffer.temp = ((float)buffer.temp/340.0) + 36.53;
     return buffer;
 }
 
