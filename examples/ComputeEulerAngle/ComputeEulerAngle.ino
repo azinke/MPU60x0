@@ -61,6 +61,10 @@ float gyro_x_offset = 0.0;
 float gyro_y_offset = 0.0;
 float gyro_z_offset = 0.0;
 
+float gyro_x = 0.0;
+float gyro_y = 0.0;
+float gyro_z = 0.0;
+
 unsigned int i = 0;
 volatile uint8_t counter = 0; // used to delay the display rate of angles
 
@@ -104,23 +108,29 @@ void loop(){
         data = mySensor.read();     // read new data
         
         // Process new data to get Euler's angles
-        accel_roll = (float)atan2(-data.accelY, data.accelZ);
+        accel_roll = (float)atan2(data.accelY, data.accelZ);
         accel_roll *= 180;
         accel_roll /= PI;
         
-        accel_pitch = (float)atan2(data.accelX, sqrt(data.accelY * data.accelY \
+        accel_pitch = (float)atan2(-data.accelX, sqrt(data.accelY * data.accelY \
                                     + data.accelZ * data.accelZ));
         accel_pitch *= 180;
         accel_pitch /= PI;
         
         // yaw angle drift
         // Not compensated
-        yaw += (float)(data.gyroZ - gyro_z_offset) * SAMPLING_TIME;    
+        yaw = 0.98 * (yaw + ((data.gyroZ - gyro_z) * SAMPLING_TIME));    // - gyro_z_offset 
         
-        pitch = (0.98*( pitch + (data.gyroY - gyro_y_offset) * SAMPLING_TIME))\
+        pitch = (0.98*( pitch + (data.gyroY - gyro_y_offset - gyro_y) * SAMPLING_TIME))\
                  + 0.02 * accel_pitch;
-        roll = (0.98*( roll + (data.gyroX - gyro_x_offset) * SAMPLING_TIME))\
+        roll = (0.98*( roll + (data.gyroX - gyro_x_offset - gyro_x) * SAMPLING_TIME))\
                  + 0.02 * accel_roll;
+        
+        // update gyro data for next computation
+        gyro_x = data.gyroX - gyro_x_offset;
+        gyro_y = data.gyroY - gyro_y_offset;
+        gyro_z = data.gyroZ - gyro_z_offset;
+        
         flag = false;
     }
     
