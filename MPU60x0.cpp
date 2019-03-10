@@ -5,11 +5,16 @@
     
     @external-library:
         Wire: I2C communication library
+    @compatibility:
+        - Arduino
+        - ESP8266
+        - ESP32
+        - STM32F1
 */
 #include "MPU60x0.h"
 
 MPU60x0::MPU60x0(){
-    Wire.begin();
+    // contructor
 }
 
 /**
@@ -19,6 +24,13 @@ MPU60x0::MPU60x0(){
     @return: none
 */
 void MPU60x0::begin(){
+    #ifdef ENERGIA
+        // Configure I2C communication pin to P1_6 and P_7
+        // P1_6: SDA
+        // P1_7: SCL
+        Wire.setModule(0);
+    #endif
+    Wire.begin();
     configure(0, 1);
     // disable sleep mode
     disableSleepMode();
@@ -59,8 +71,11 @@ uint8_t MPU60x0::_read(uint8_t registerAddr){
     Wire.beginTransmission(ADDR);
     Wire.write(registerAddr);
     Wire.endTransmission(false);
-    
+#ifdef __STM32F1__    
+    Wire.requestFrom(ADDR, 1);
+#else
     Wire.requestFrom(ADDR, 1, true);
+#endif
     _buffer = Wire.read();
     return _buffer;
 }
@@ -77,9 +92,12 @@ uint8_t MPU60x0::_read(uint8_t registerAddr){
 void MPU60x0::_readBytes(uint8_t startAddr, uint8_t *buffer, uint8_t size){
     Wire.beginTransmission(ADDR);
     Wire.write(startAddr);
-    Wire.endTransmission(false);
-    
+    Wire.endTransmission(false);    
+#ifdef __STM32F1__
+    Wire.requestFrom(ADDR, size);
+#else
     Wire.requestFrom(ADDR, size, true);
+#endif
     uint8_t i = 0;
     while(Wire.available() && i < size){
         buffer[i++] = Wire.read();    

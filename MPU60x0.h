@@ -12,7 +12,7 @@
 
 #if ARDUINO < 100
 #include <WProgram.h>
-#else
+#elif ARDUINO
 #include <Arduino.h>
 #endif
 
