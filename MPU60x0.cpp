@@ -30,6 +30,8 @@ void MPU60x0::begin(){
         // P1_7: SCL
         Wire.setModule(0);
     #endif
+    Wire.setClock(400000);
+    delay(500);
     Wire.begin();
     configure(0, 1);
     // disable sleep mode
