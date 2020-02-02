@@ -1,6 +1,6 @@
 # Inertial Measurement Unit (IMU)
 
-The current library is based on the `PMU60x0` IMU from `InvenSense Inc.`. 
+The current library is based on the `PMU60x0` IMU from `InvenSense Inc`. 
 Developped around the `GY-521` DIY module, this library is tested with the 
 MPU6050 chip.
 
